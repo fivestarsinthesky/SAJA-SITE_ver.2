@@ -41,19 +41,45 @@
     <div id="grid" class="grid"></div>
   </main>
 
-  <script src="./assets/data/tracks.js"></script>
-  <script>
-    const $grid = document.getElementById('grid');
-    (window.TRACKS||[]).forEach(item=>{
+ <!-- 1) 데이터 먼저 로드 -->
+<script src="./assets/data/tracks.js"></script>
+
+<!-- 2) 안전 렌더 스크립트 -->
+<script>
+(function () {
+  const grid = document.getElementById('grid');
+  if (!grid) return;
+
+  function msg(t) { grid.innerHTML = '<div style="padding:24px;font-weight:700;color:#fff;">'+t+'</div>'; }
+
+  try {
+    const data = (window.TRACKS && Array.isArray(window.TRACKS)) ? window.TRACKS : [];
+    if (!data.length) {
+      console.error('TRACKS 비어있음 또는 로드 실패');
+      msg('데이터가 없습니다. assets/data/tracks.js를 확인하세요.');
+      return;
+    }
+
+    const frag = document.createDocumentFragment();
+    data.forEach(item => {
       const a = document.createElement('a');
       a.className = 'tile';
-      a.href = `./detail.html?id=${encodeURIComponent(item.id)}`;
+      if (item.ratio) a.style.setProperty('--tile-ratio', item.ratio);
+      a.href = './detail.html?id=' + encodeURIComponent(item.id);
       a.innerHTML = `
         <img loading="lazy" src="${item.thumb}" alt="${item.artist} — ${item.title}">
         <div class="label">${item.artist} — ${item.title}</div>
       `;
-      $grid.appendChild(a);
+      frag.appendChild(a);
     });
-  </script>
+    grid.innerHTML = '';
+    grid.appendChild(frag);
+  } catch (e) {
+    console.error(e);
+    msg('스크립트 오류가 발생했습니다. 콘솔을 확인하세요.');
+  }
+})();
+</script>
+
 </body>
 </html>
