@@ -1,4 +1,3 @@
-<script>
 window.TRACKS = [
   {
     id: "t001",
@@ -498,4 +497,3 @@ Goodbye
 감사합니다`
   },
 ];
-</script>
