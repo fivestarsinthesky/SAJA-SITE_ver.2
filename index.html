@@ -14,7 +14,7 @@
     background: #fff url('./assets/bg.png?v=2025-08-11-1') no-repeat top center / 100% auto;
     color:#111;
   }
-  .wrap { max-width: var(--maxw); margin:0 auto; padding:24px 12px 28px; padding-top: calc(max(var(--hero), 80px) * 1.8 + 8px); }
+  .wrap { max-width: var(--maxw); margin:0 auto; padding:24px 24px 28px; padding-top: calc(max(var(--hero), 80px) * 1.8 + 8px); }
 
   /* 기본 10열 */
   .grid { display:grid; grid-template-columns:repeat(10,1fr); gap:var(--gap); }
@@ -38,7 +38,7 @@
   /* 단계적 반응형 */
   @media (max-width:1400px){ .grid{ grid-template-columns:repeat(8,1fr); } }
   @media (max-width:1200px){ .grid{ grid-template-columns:repeat(6,1fr); } }
-  @media (max-width:900px){  .grid{ grid-template-columns:repeat(4,1fr); } .wrap{ padding:16px 10px 24px; } }
+  @media (max-width:900px){  .grid{ grid-template-columns:repeat(4,1fr); } .wrap{ padding:16px 20px 24px; } }
   @media (max-width:640px){  .grid{ grid-template-columns:repeat(2,1fr); } }
 
   /* 오버레이 */
@@ -85,18 +85,13 @@
   height: var(--sns-size);
   display: inline-grid;
   place-items: center;
-  border-radius: 10px;
-  background: rgba(255,255,255,.85);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 2px 10px rgba(0,0,0,.12);
-  text-decoration: none;
   overflow: hidden;
 }
 
 /* 아이콘 이미지는 박스에 맞게 */
 .sns-grid img{
-  max-width: 70%;
-  max-height: 70%;
+  width: 100%;
+  height: auto;
   display: block;
 }
 
@@ -107,7 +102,7 @@
 }
 </style>
 </head>
-<body><div class="title-fixed"><img alt="사자왕자의 노래방 타이틀" src="./assets/title.png?v=2025-08-11-1"/></div><nav aria-label="SNS 링크" class="sns-grid"><a aria-label="YouTube" href="https://www.youtube.com/@lionprince.x" rel="noopener" target="_blank"><img alt="YouTube" src="./assets/icons/sns1.png"/></a><a aria-label="X" href="https://x.com/" rel="noopener" target="_blank"><img alt="X" src="./assets/icons/sns2.png"/></a><a aria-label="Naver Cafe" href="https://cafe.naver.com/" rel="noopener" target="_blank"><img alt="Naver Cafe" src="./assets/icons/sns3.png"/></a></nav>
+<body><div class="title-fixed"><img alt="" src="./assets/title.png?v=2025-08-11-1"/></div><nav aria-label="SNS 링크" class="sns-grid"><a aria-label="YouTube" href="https://www.youtube.com/@lionprince.x" rel="noopener" target="_blank"><img alt="YouTube" src="./assets/icons/sns1.png?v=2025-08-11-1"/></a><a aria-label="X" href="https://x.com/" rel="noopener" target="_blank"><img alt="X" src="./assets/icons/sns2.png?v=2025-08-11-2"/></a><a aria-label="Naver Cafe" href="https://cafe.naver.com/" rel="noopener" target="_blank"><img alt="Naver Cafe" src="./assets/icons/sns3.png?v=2025-08-11-3"/></a></nav>
 <main class="wrap">
 <div class="grid" id="grid"></div>
 </main>
