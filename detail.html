@@ -2,107 +2,169 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>상세 | 사자왕자의 노래방</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>상세 페이지</title>
 <style>
-  :root{ --gap:16px; --left:60%; --right:40%; --menu-h:160px; --maxw:1400px; }
-  *{ box-sizing:border-box; }
-  body{ margin:0; font-family:system-ui,"Noto Sans KR",sans-serif; background:#fff; color:#111; }
-
-  header{ display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid #eee; }
-  header a{ text-decoration:none; font-weight:700; color:#06f; }
-  #hdrTitle{ font-weight:800; }
-
-  .page{ max-width:var(--maxw); margin:0 auto; padding:16px; }
-  .pc-grid{ display:grid; gap:var(--gap); grid-template-columns:var(--left) var(--right); }
-  .left-col{ display:grid; gap:var(--gap); grid-template-rows:1fr auto; }
-
-  .player{ position:relative; border:1px solid #eee; border-radius:12px; overflow:hidden; background:#000; }
-  .player::before{ content:""; display:block; padding-top:56.25%; }
-  .player iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
-
-  .menu{ min-height:var(--menu-h); border:1px solid #eee; border-radius:12px; padding:10px; display:flex; flex-wrap:wrap; gap:8px; align-content:flex-start; }
-  .tab{ border:1px solid #ddd; background:#fff; border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:700; }
-  .tab[aria-pressed="true"]{ background:#111; color:#fff; border-color:#111; }
-
-  \1\2 background:#fff; }
-  .content h2{ margin:6px 0 10px; font-size:18px; }
-  .content .meta{ opacity:.7; font-size:13px; margin-bottom:8px; }
-  .content pre{ white-space:pre-wrap; line-height:1.5; font-family:inherit; }
-
-  @media (max-width:900px){
-    .pc-grid{ display:block; }
-    .left-col{ display:block; }
-    .menu{ margin-bottom:12px; }
-    \1\2 background:#fff; }
+  /* 1) 페이지 자체는 한 화면 고정: 스크롤 없음 */
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* 페이지 스크롤 제거 */
+    background: #000; /* 필요 시 변경 */
+    color: #fff;
+    font-family: system-ui, "Noto Sans KR", sans-serif;
   }
 
-  body::before{
-    content:"";
-    position:fixed; inset:0;
-    background: rgba(255,255,255,.05);
-    pointer-events:none;
+  /* 2) PC: 좌우 2분할(영상 / 내용), 모바일: 상하 2분할 */
+  .shell {
+    display: grid;
+    width: 100vw;
+    height: 100vh;
+    grid-template-columns: 58% 42%;
+    grid-template-rows: 100%;
+  }
+  @media (max-width: 900px) {
+    .shell {
+      grid-template-columns: 100%;
+      grid-template-rows: 50% 50%;
+    }
+  }
+
+  /* 3) 왼쪽: 유튜브 영역 (반응형 16:9) */
+  .yt-wrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #000;
+  }
+  .yt-inner {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+  /* 16:9 박스: 가로/세로 어느 쪽이든 최대치로 맞추기 */
+  .yt-box {
+    width: 100%;
+    height: 100%;
+  }
+  .yt-box iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  /* 4) 오른쪽(또는 아래): 스크롤 가능한 외부/내부 페이지 */
+  .pane {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #111; /* 필요 시 투명/이미지 등으로 교체 */
+    overflow: hidden; /* iframe 자체 스크롤 사용 */
+  }
+  .pane iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    /* iframe 내부 페이지의 스크롤은 iframe 안에서 표시됨 */
+  }
+
+  /* 상단 미니 헤더(선택): 닫기/이동 버튼 등 둘 자리 */
+  .toolbar {
+    position: fixed;
+    top: 8px; left: 8px;
+    z-index: 10;
+    display: flex; gap: 8px;
+  }
+  .toolbar a, .toolbar button {
+    appearance: none;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.2);
+    color: #fff;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
   }
 </style>
 </head>
 <body>
-  <header>
+  <div class="toolbar">
     <a href="./index.html">← 목록으로</a>
-    <div id="hdrTitle"></div>
-  </header>
-
-  <div class="page">
-    <div class="pc-grid">
-      <div class="left-col">
-        <div class="player"><iframe id="yt" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
-        <div class="menu" role="group" aria-label="콘텐츠 선택">
-          <button class="tab" data-panel="lyrics" aria-pressed="true">가사</button>
-          <button class="tab" data-panel="more" aria-pressed="false">더보기</button>
-        </div>
-      </div>
-
-      <div class="content">
-        <h2 id="cTitle">가사</h2>
-        <div id="cMeta" class="meta"></div>
-        <pre id="panel">로드 중…</pre>
-      </div>
-    </div>
   </div>
 
-  <script src="./assets/data/tracks.js"></script>
+  <main class="shell">
+    <!-- 왼쪽: 유튜브(또는 동영상) -->
+    <section class="yt-wrap">
+      <div class="yt-inner">
+        <div class="yt-box">
+          <iframe id="yt" src="" title="YouTube video player"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- 오른쪽/아래: 스크롤 가능한 가사/더보기 등의 페이지 -->
+    <aside class="pane">
+      <iframe id="page" src="" title="상세 내용"></iframe>
+    </aside>
+  </main>
+
   <script>
-    function q(k){ return new URL(location.href).searchParams.get(k); }
-    function toEmbed(url){
-      try{
-        const u = new URL(url);
-        if (u.hostname.includes('youtu.be')) return 'https://www.youtube.com/embed/' + u.pathname.slice(1);
-        if (u.hostname.includes('youtube.com')){ const v=u.searchParams.get('v'); if(v) return 'https://www.youtube.com/embed/'+v; }
-      }catch(e){} return '';
+    // URL 파라미터 파싱
+    const params = new URLSearchParams(location.search);
+
+    // 1) 유튜브 소스 결정
+    // 우선순위: yt(완전 URL) > ytid(영상 ID) > embed 기본값
+    let ytSrc = "";
+    const ytParam = params.get("yt");
+    const ytId = params.get("ytid");
+    if (ytParam) {
+      ytSrc = ytParam;
+    } else if (ytId) {
+      ytSrc = "https://www.youtube.com/embed/" + encodeURIComponent(ytId);
+    } else {
+      // 기본값(데모)
+      ytSrc = "https://www.youtube.com/embed/dQw4w9WgXcQ";
     }
-
-    const id = q('id');
-    const data = (window.TRACKS||[]).find(x=>x.id===id) || {};
-    document.getElementById('hdrTitle').textContent = (data.artist&&data.title)? `${data.artist} — ${data.title}` : '상세';
-
-    const $yt = document.getElementById('yt');
-    $yt.src = toEmbed(data.youtube||'');
-
-    const $panel = document.getElementById('panel');
-    const $cTitle = document.getElementById('cTitle');
-
-    function show(which){
-      if(which==='lyrics'){ $cTitle.textContent='가사'; $panel.textContent=data.lyrics||'가사가 아직 준비되지 않았습니다.'; }
-      else { $cTitle.textContent='더보기'; $panel.textContent=data.more||'추가 정보가 없습니다.'; }
+    // 자동재생/브랜드 미니멀 옵션 등 필요 시 쿼리 추가 가능
+    if (!ytSrc.includes("autoplay=")) {
+      ytSrc += (ytSrc.includes("?") ? "&" : "?") + "rel=0";
     }
-    show('lyrics');
+    document.getElementById("yt").src = ytSrc;
 
-    document.querySelectorAll('.menu .tab').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        document.querySelectorAll('.menu .tab').forEach(b=>b.setAttribute('aria-pressed','false'));
-        btn.setAttribute('aria-pressed','true');
-        show(btn.dataset.panel);
-      });
-    });
+    // 2) 오른쪽/아래 페이지 소스 결정
+    // 우선순위: page(완전 URL) > local(상대경로) > 기본 가이드 페이지
+    let pageSrc = params.get("page") || params.get("local");
+    if (!pageSrc) {
+      // 기본 안내 페이지(스크롤 테스트용 긴 페이지)
+      const demo = `data:text/html;charset=utf-8,` + encodeURIComponent(`
+        <!doctype html>
+        <html lang="ko"><head><meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>스크롤 가능한 영역</title>
+        <style>
+          body{margin:0;padding:20px;color:#fff;background:#181818;font-family:system-ui,"Noto Sans KR",sans-serif;line-height:1.6}
+          h1{margin:0 0 12px 0;font-size:20px}
+          p{margin:0 0 16px 0}
+          .long{height:140vh;background:linear-gradient(180deg,#222,#333);border-radius:12px;margin:16px 0}
+        </style></head>
+        <body>
+          <h1>여기는 "가사/더보기"가 들어갈 프레임입니다.</h1>
+          <p>이 프레임 내부는 스크롤이 가능하고, 상세페이지(전체)는 한 화면에 고정입니다.</p>
+          <div class="long"></div>
+          <p>외부 URL 또는 프로젝트 내부 경로를 page= 파라미터로 전달하면 해당 페이지가 로드됩니다.</p>
+        </body></html>
+      `);
+      pageSrc = demo;
+    }
+    document.getElementById("page").src = pageSrc;
   </script>
 </body>
 </html>
