@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>사자왕자의 노래방 | 포스터 그리드</title>
 <style>
-  :root { --gap: 8px; --tile-ratio: 56.25%; --maxw: 1600px; }
+  :root { --gap: 8px; --tile-ratio: 56.25%; --maxw: 1600px; --hero: clamp(140px, 32vw, 520px); }
   * { box-sizing: border-box; }
   body {
     margin:0;
     font-family: system-ui, "Noto Sans KR", sans-serif;
-    background: #fff url('./assets/bg.png') no-repeat center center / cover;
+    background: #fff url('./assets/bg.png') no-repeat top center / 100% auto;
     color:#111;
   }
-  .wrap { max-width: var(--maxw); margin:0 auto; padding:24px 12px 28px; }
+  .wrap { max-width: var(--maxw); margin:0 auto; padding:24px 12px 28px; padding-top: calc(var(--hero) + 8px); }
 
   /* 기본 10열 */
   .grid { display:grid; grid-template-columns:repeat(10,1fr); gap:var(--gap); }
