@@ -1,0 +1,6 @@
+poster_cut_3-1.png
+
+46~50번 좌표: 유튜브 url 36~40번 순서대로 연결
+51~54번 좌표: 유튜브 url 41~44번 순서대로 연결
+
+<map id="imgmap202587224132" name="imgmap202587224132"><area shape="rect" alt="" title="" coords="94,0,466,135" href="" target="" /><area shape="rect" alt="" title="" coords="516,-1,884,139" href="" target="" /><area shape="rect" alt="" title="" coords="935,0,1302,137" href="" target="" /><area shape="rect" alt="" title="" coords="1357,0,1725,140" href="" target="" /><area shape="rect" alt="" title="" coords="1781,0,2146,136" href="" target="" /><area shape="rect" alt="" title="" coords="98,224,460,419" href="" target="" /><area shape="rect" alt="" title="" coords="518,224,878,420" href="" target="" /><area shape="rect" alt="" title="" coords="940,223,1304,420" href="" target="" /><area shape="rect" alt="" title="" coords="1364,223,1724,422" href="" target="" /><!-- Created by Online Image Map Editor (http://www.maschek.hu/imagemap/index) --></map>
