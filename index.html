@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>사자왕자의 노래방 | 포스터 그리드</title>
 <style>
-  :root { --gap: 8px; --tile-ratio: 100%; --maxw: 1600px; }
+  :root { --gap: 8px; --tile-ratio:  56.25%; --maxw: 1600px; }
   * { box-sizing: border-box; }
   body { margin:0; font-family: system-ui, "Noto Sans KR", sans-serif; background:#fff; color:#111; }
   header { padding:18px 14px; text-align:center; border-bottom:1px solid #eee; }
   .title { font-weight:900; font-size:22px; }
   .subtitle { margin-top:6px; font-size:13px; opacity:.7; }
-  .wrap { max-width: var(--maxw); margin:0 auto; padding:16px 12px 28px; }
+  .wrap { max-width: var(--maxw); margin:0 auto; padding:24px 12px 28px; }
 
   .grid { display:grid; grid-template-columns:repeat(10,1fr); gap:var(--gap); }
   .tile { position:relative; overflow:hidden; border-radius:12px; border:1px solid #eee; background:#f7f7f7; }
@@ -26,14 +26,17 @@
     .wrap{ padding:12px 10px 24px; }
     .title{ font-size:18px; }
   }
+
+  /* Optional readability overlay */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background: rgba(255,255,255,.05);
+    pointer-events:none;
+  }
 </style>
 </head>
 <body>
-  <header>
-    <div class="title">사자왕자의 노래방</div>
-    <div class="subtitle">포스터 그리드 · 클릭하면 3분할 상세 페이지로 이동</div>
-  </header>
-
   <main class="wrap">
     <div id="grid" class="grid"></div>
   </main>

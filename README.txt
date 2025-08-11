@@ -33,3 +33,6 @@ site/
 4) 표시 형식
    - 첫 페이지 라벨은 '가수 — 제목' 형식으로 자동 표시합니다.
    - 상세 페이지는 PC(6:4 분할), 모바일(메뉴→유튜브→콘텐츠)로 자동 전환합니다.
+
+
+[Update] Grid ratio fixed to 16:9 (56.25%). Background image path: assets/bg.png.
