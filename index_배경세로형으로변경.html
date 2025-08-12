@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>사자왕자의 노래방 | 포스터 그리드</title>
+<style>
+  :root { --gap: 8px; --tile-ratio: 56.25%; --maxw: 1600px; --hero: clamp(140px, 32vw, 520px); }
+  * { box-sizing: border-box; }
+  body {
+    margin:0;
+    font-family: system-ui, "Noto Sans KR", sans-serif;
+    background: #fff url('./assets/bg.png') no-repeat top center / 100% auto;
+    color:#111;
+  }
+  .wrap { max-width: var(--maxw); margin:0 auto; padding:24px 12px 28px; padding-top: calc(var(--hero) + 8px); }
+
+  /* 기본 10열 */
+  .grid { display:grid; grid-template-columns:repeat(10,1fr); gap:var(--gap); }
+  .tile { position:relative; overflow:hidden; border-radius:12px; border:1px solid #eee; background:#f7f7f7; }
+  .tile::before { content:""; display:block; padding-top: var(--tile-ratio); }
+  .tile img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .2s; }
+  .tile:hover img{ transform:scale(1.03); }
+
+  /* 라벨: 한 줄 유지 + 가독성 */
+  .label{
+    position:absolute; left:0; right:0; bottom:0;
+    padding:6px 8px;
+    color:#fff; background:linear-gradient(to top, rgba(0,0,0,.65), rgba(0,0,0,0));
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    font-weight:700;
+    line-height:1.1;
+    /* 초기 폰트 크기(상한) */
+    font-size:14px;
+  }
+
+  /* 단계적 반응형 */
+  @media (max-width:1400px){ .grid{ grid-template-columns:repeat(8,1fr); } }
+  @media (max-width:1200px){ .grid{ grid-template-columns:repeat(6,1fr); } }
+  @media (max-width:900px){  .grid{ grid-template-columns:repeat(4,1fr); } .wrap{ padding:16px 10px 24px; } }
+  @media (max-width:640px){  .grid{ grid-template-columns:repeat(2,1fr); } }
+
+  /* 오버레이 */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background: rgba(255,255,255,.05);
+    pointer-events:none;
+  }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <div id="grid" class="grid"></div>
+  </main>
+
+  <!-- 데이터 먼저 로드 -->
+  <script src="./assets/data/tracks.js?v=cache"></script>
+
+  <script>
+  // 라벨 폰트를 한 줄에 맞출 때까지 줄이는 함수
+  function fitLabel(el, options){
+    const max = (options && options.max) || 14;   // px
+    const min = (options && options.min) || 10;   // px
+    const step = (options && options.step) || 1;  // px
+    // 상한으로 세팅 후 줄이기
+    let size = max;
+    el.style.fontSize = size + 'px';
+    el.style.whiteSpace = 'nowrap';
+    el.style.overflow = 'hidden';
+    el.style.textOverflow = 'ellipsis';
+    // 만약 너무 길면 줄여가며 맞춤
+    while (size > min && el.scrollWidth > el.clientWidth) {
+      size -= step;
+      el.style.fontSize = size + 'px';
+    }
+    // 그래도 넘치면 마지막엔 말줄임 유지(이미 설정됨)
+  }
+
+  (function () {
+    const grid = document.getElementById('grid');
+    if (!grid) return;
+
+    // 데이터 안전 가드
+    if (!Array.isArray(window.TRACKS)) window.TRACKS = [];
+    const data = window.TRACKS;
+
+    if (!data.length) {
+      grid.innerHTML = '<div style="padding:24px;font-weight:700;color:#fff;">데이터가 없습니다. assets/data/tracks.js를 확인하세요.</div>';
+      return;
+    }
+
+    // 그리드 렌더
+    const frag = document.createDocumentFragment();
+    data.forEach(item => {
+      const a = document.createElement('a');
+      a.className = 'tile';
+      a.href = './detail.html?id=' + encodeURIComponent(item.id);
+      a.innerHTML = `
+        <img loading="lazy" src="${item.thumb}" alt="${item.artist} - ${item.title}">
+        <div class="label">${item.artist} - ${item.title}</div>
+      `;
+      frag.appendChild(a);
+    });
+    grid.innerHTML = '';
+    grid.appendChild(frag);
+
+    // 모든 라벨을 한 줄에 맞추도록 폰트 크기 자동 조정
+    const labels = grid.querySelectorAll('.label');
+    labels.forEach(label => fitLabel(label, {max:14, min:10, step:1}));
+
+    // 창 크기 변경 시 다시 맞추기(성능 보호용 간단 디바운스)
+    let t;
+    window.addEventListener('resize', () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        labels.forEach(label => fitLabel(label, {max:14, min:10, step:1}));
+      }, 100);
+    });
+  })();
+  </script>
+</body>
+</html>
