@@ -101,7 +101,23 @@
   outline-offset: 2px;
 }
 </style>
-</head>
+<style>
+.sns-grid img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: none;
+    box-shadow: none;
+    background: none;
+    border-radius: 0;
+}
+.sns-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+</style></head>
 <body><div class="title-fixed"><img alt="" src="./assets/title.png?v=2025-08-11-1"/></div><nav aria-label="SNS 링크" class="sns-grid"><a aria-label="YouTube" href="https://www.youtube.com/@lionprince.x" rel="noopener" target="_blank"><img alt="YouTube" src="./assets/icons/sns1.png?v=2025-08-11-1"/></a><a aria-label="X" href="https://x.com/" rel="noopener" target="_blank"><img alt="X" src="./assets/icons/sns2.png?v=2025-08-11-2"/></a><a aria-label="Naver Cafe" href="https://cafe.naver.com/" rel="noopener" target="_blank"><img alt="Naver Cafe" src="./assets/icons/sns3.png?v=2025-08-11-3"/></a></nav>
 <main class="wrap">
 <div class="grid" id="grid"></div>

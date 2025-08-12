@@ -92,7 +92,25 @@
     text-decoration: none;
   }
 </style>
-</head>
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+.detail-layout {
+    display: flex;
+    height: 100%;
+}
+.detail-left, .detail-right {
+    height: 100%;
+    overflow: hidden;
+}
+.detail-right .scrollable {
+    overflow-y: auto;
+    height: 100%;
+}
+</style></head>
 <body>
   <div class="toolbar">
     <a href="./index.html">← 목록으로</a>
@@ -154,7 +172,25 @@
           h1{margin:0 0 12px 0;font-size:20px}
           p{margin:0 0 16px 0}
           .long{height:140vh;background:linear-gradient(180deg,#222,#333);border-radius:12px;margin:16px 0}
-        </style></head>
+        </style><style>
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+.detail-layout {
+    display: flex;
+    height: 100%;
+}
+.detail-left, .detail-right {
+    height: 100%;
+    overflow: hidden;
+}
+.detail-right .scrollable {
+    overflow-y: auto;
+    height: 100%;
+}
+</style></head>
         <body>
           <h1>여기는 "가사/더보기"가 들어갈 프레임입니다.</h1>
           <p>이 프레임 내부는 스크롤이 가능하고, 상세페이지(전체)는 한 화면에 고정입니다.</p>
