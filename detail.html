@@ -1,209 +1,141 @@
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>상세 페이지</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>상세 | 사자왕자의 노래방</title>
 <style>
-  /* 1) 페이지 자체는 한 화면 고정: 스크롤 없음 */
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden; /* 페이지 스크롤 제거 */
-    background: #000; /* 필요 시 변경 */
-    color: #fff;
-    font-family: system-ui, "Noto Sans KR", sans-serif;
+  :root{
+    --gap:16px; --left:60%; --right:40%; --maxw:1400px;
+    --panel-bg:#ffffff; --panel-border:#eeeeee; --ink:#111111;
+    --accent:#111111; --accent-ink:#ffffff;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:system-ui,"Noto Sans KR",sans-serif; background:#fff; color:var(--ink); }
+
+  /* 상단 바 */
+  header{ display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid #eee; }
+  header a{ text-decoration:none; font-weight:700; color:#06f; }
+  #hdrTitle{ font-weight:800; }
+
+  /* 본문 레이아웃 */
+  .page{ max-width:var(--maxw); margin:0 auto; padding:16px; }
+  .pc-grid{ display:grid; gap:var(--gap); grid-template-columns:var(--left) var(--right); }
+  .left-col{ display:grid; gap:var(--gap); grid-template-rows:auto auto; }
+
+  /* 플레이어 카드 */
+  .card{ border:1px solid var(--panel-border); border-radius:12px; background:var(--panel-bg); overflow:hidden; }
+  .player{ position:relative; background:#000; }
+  .player::before{ content:""; display:block; padding-top:56.25%; }
+  .player iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+
+  /* 탭 메뉴 */
+  .menu{ display:flex; flex-wrap:wrap; gap:8px; padding:10px; }
+  .tab{ border:1px solid #ddd; background:#fff; border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:700; }
+  .tab[aria-pressed="true"]{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+
+  /* 우측 콘텐츠 */
+  .content.card{ padding:14px 14px 18px; }
+  .content h2{ margin:4px 0 8px; font-size:18px; }
+  .content .meta{ opacity:.7; font-size:13px; margin-bottom:8px; }
+  .content .text{ white-space:pre-wrap; line-height:1.55; }
+
+  /* 반응형: 모바일에서 상하 배치 */
+  @media (max-width:900px){
+    .pc-grid{ display:block; }
+    .left-col{ display:block; }
+    .menu{ margin-top:12px; }
   }
 
-  /* 2) PC: 좌우 2분할(영상 / 내용), 모바일: 상하 2분할 */
-  .shell {
-    display: grid;
-    width: 100vw;
-    height: 100vh;
-    grid-template-columns: 58% 42%;
-    grid-template-rows: 100%;
-  }
-  @media (max-width: 900px) {
-    .shell {
-      grid-template-columns: 100%;
-      grid-template-rows: 50% 50%;
-    }
-  }
-
-  /* 3) 왼쪽: 유튜브 영역 (반응형 16:9) */
-  .yt-wrap {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    background: #000;
-  }
-  .yt-inner {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-  }
-  /* 16:9 박스: 가로/세로 어느 쪽이든 최대치로 맞추기 */
-  .yt-box {
-    width: 100%;
-    height: 100%;
-  }
-  .yt-box iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
-  }
-
-  /* 4) 오른쪽(또는 아래): 스크롤 가능한 외부/내부 페이지 */
-  .pane {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    background: #111; /* 필요 시 투명/이미지 등으로 교체 */
-    overflow: hidden; /* iframe 자체 스크롤 사용 */
-  }
-  .pane iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
-    /* iframe 내부 페이지의 스크롤은 iframe 안에서 표시됨 */
-  }
-
-  /* 상단 미니 헤더(선택): 닫기/이동 버튼 등 둘 자리 */
-  .toolbar {
-    position: fixed;
-    top: 8px; left: 8px;
-    z-index: 10;
-    display: flex; gap: 8px;
-  }
-  .toolbar a, .toolbar button {
-    appearance: none;
-    background: rgba(255,255,255,.12);
-    border: 1px solid rgba(255,255,255,.2);
-    color: #fff;
-    border-radius: 10px;
-    padding: 8px 12px;
-    font-size: 13px;
-    cursor: pointer;
-    text-decoration: none;
+  /* 은은한 오버레이(옵션) */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background: rgba(255,255,255,.05);
+    pointer-events:none;
   }
 </style>
 </head>
 <body>
-<div class="toolbar">
-<a href="./index.html">← 목록으로</a>
-</div>
-<main class="shell">
-<!-- 왼쪽: 유튜브(또는 동영상) -->
-<section class="yt-wrap">
-<div class="yt-inner">
-<div class="yt-box">
-<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" id="yt" src="" title="YouTube video player"></iframe>
-</div>
-</div>
-</section>
-<!-- 오른쪽/아래: 스크롤 가능한 가사/더보기 등의 페이지 -->
-<aside class="pane">
-<iframe id="page" src="" title="상세 내용"></iframe>
-</aside>
-</main>
-<script src="./assets/data/tracks.js?v=cache"></script><script>
-  // URL 파라미터 파싱
-  const params = new URLSearchParams(location.search);
-  const trackId = params.get("id");
+  <header>
+    <a href="./index.html">← 목록으로</a>
+    <div id="hdrTitle"></div>
+  </header>
 
-  // 유튜브 ID 추출 유틸
-  function extractYouTubeId(url){
-    if(!url) return "";
-    try{
-      // youtu.be/VIDEOID
-      let m = url.match(/youtu\.be\/([a-zA-Z0-9_-]{6,})/);
-      if(m && m[1]) return m[1];
-      // youtube.com/watch?v=VIDEOID
-      m = url.match(/[?&]v=([a-zA-Z0-9_-]{6,})/);
-      if(m && m[1]) return m[1];
-      // 이미 embed 형식
-      m = url.match(/embed\/([a-zA-Z0-9_-]{6,})/);
-      if(m && m[1]) return m[1];
-      return "";
-    }catch(e){
-      return "";
+  <div class="page">
+    <div class="pc-grid">
+      <div class="left-col">
+        <div class="card player"><iframe id="yt" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="card">
+          <div class="menu" role="group" aria-label="콘텐츠 선택">
+            <button class="tab" data-panel="lyrics" aria-pressed="true">가사</button>
+            <button class="tab" data-panel="more" aria-pressed="false">더보기</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="content card">
+        <h2 id="cTitle">가사</h2>
+        <div id="cMeta" class="meta"></div>
+        <div id="panel" class="text">로드 중…</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./assets/data/tracks.js?v=cache"></script>
+  <script>
+    function q(k){ return new URL(location.href).searchParams.get(k); }
+    function extractYouTubeId(url){
+      if(!url) return "";
+      try{
+        let m = url.match(/youtu\.be\/([a-zA-Z0-9_-]{6,})/);
+        if(m && m[1]) return m[1];
+        m = url.match(/[?&]v=([a-zA-Z0-9_-]{6,})/);
+        if(m && m[1]) return m[1];
+        m = url.match(/embed\/([a-zA-Z0-9_-]{6,})/);
+        if(m && m[1]) return m[1];
+        return "";
+      }catch(e){ return ""; }
     }
-  }
-
-  // 기본값
-  let ytSrc = "https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0";
-  let pageSrc = "";
-
-  // TRACKS에서 id로 찾기
-  let item = null;
-  if (Array.isArray(window.TRACKS) && trackId){
-    item = window.TRACKS.find(t => String(t.id) === String(trackId));
-  }
-
-  if (item){
-    // 1) 유튜브
-    const vid = extractYouTubeId(item.youtube || "");
-    if (vid) {
-      ytSrc = "https://www.youtube.com/embed/" + encodeURIComponent(vid) + "?rel=0";
+    function toEmbed(url){
+      const id = extractYouTubeId(url);
+      return id ? ("https://www.youtube.com/embed/" + encodeURIComponent(id) + "?rel=0") : "";
     }
 
-    // 2) 오른쪽 페이지: 가사 + 더보기 합쳐서 내부 스크롤 페이지 생성
-    const safe = s => (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    const lyricHtml = safe(item.lyrics).replace(/\n/g, "<br>");
-    const moreHtml = safe(item.more).replace(/\n/g, "<br>");
-    const contentHtml = `<!doctype html>
-<html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>${safe(item.artist)} - ${safe(item.title)}</title>
-<style>
-  body{margin:0;padding:18px 16px 24px;color:#fff;background:#181818;
-       font-family:system-ui,"Noto Sans KR",sans-serif;line-height:1.55;font-size:16px}
-  h1{font-size:18px;margin:0 0 12px 0;line-height:1.2}
-  section{background:#202020;border-radius:12px;padding:14px 14px;margin:12px 0}
-  h2{font-size:14px;margin:0 0 8px 0;opacity:.9}
-  .mono{white-space:normal;word-break:keep-all}
-</style></head>
-<body>
-  <h1>${safe(item.artist)} - ${safe(item.title)}</h1>
-  <section>
-    <h2>가사</h2>
-    <div class="mono">${lyricHtml || "가사 정보가 없습니다."}</div>
-  </section>
-  <section>
-    <h2>더보기</h2>
-    <div class="mono">${moreHtml || "설명 정보가 없습니다."}</div>
-  </section>
-</body></html>`;
-    pageSrc = "data:text/html;charset=utf-8," + encodeURIComponent(contentHtml);
-  }else{
-    // 기존 데모 페이지 유지
-    const demo = `data:text/html;charset=utf-8,` + encodeURIComponent(`
-      <!doctype html><html lang="ko"><head><meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>스크롤 가능한 영역</title>
-      <style>
-        body{margin:0;padding:20px;color:#fff;background:#181818;font-family:system-ui,"Noto Sans KR",sans-serif;line-height:1.6}
-        h1{margin:0 0 12px 0;font-size:20px}
-        p{margin:0 0 16px 0}
-        .long{height:140vh;background:linear-gradient(180deg,#222,#333);border-radius:12px;margin:16px 0}
-      </style></head>
-      <body>
-        <h1>TRACKS에서 항목을 찾지 못했습니다.</h1>
-        <p>URL에 id 파라미터가 없거나, tracks.js가 로드되지 않았습니다.</p>
-        <div class="long"></div>
-      </body></html>
-    `);
-    pageSrc = demo;
-  }
+    const id = q('id');
+    const data = (Array.isArray(window.TRACKS) ? window.TRACKS : []).find(x=>String(x.id)===String(id)) || {};
 
-  // 실제 iframe 주입
-  document.getElementById("yt").src = ytSrc;
-  document.getElementById("page").src = pageSrc;
-</script>
+    // 헤더 제목
+    document.getElementById('hdrTitle').textContent = (data.artist&&data.title)? `${data.artist} — ${data.title}` : '상세';
+
+    // 플레이어
+    const $yt = document.getElementById('yt');
+    $yt.src = toEmbed(data.youtube||'') || "https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0";
+
+    // 메타/본문
+    const $panel = document.getElementById('panel');
+    const $cTitle = document.getElementById('cTitle');
+    const $cMeta = document.getElementById('cMeta');
+    $cMeta.textContent = (data.artist&&data.title) ? `${data.artist} · ${data.title}` : '';
+
+    function show(which){
+      if(which==='lyrics'){
+        $cTitle.textContent='가사';
+        $panel.textContent = (data.lyrics||'가사가 아직 준비되지 않았습니다.');
+      }else{
+        $cTitle.textContent='더보기';
+        $panel.textContent = (data.more||'추가 정보가 없습니다.');
+      }
+    }
+    show('lyrics');
+
+    document.querySelectorAll('.menu .tab').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        document.querySelectorAll('.menu .tab').forEach(b=>b.setAttribute('aria-pressed','false'));
+        btn.setAttribute('aria-pressed','true');
+        show(btn.dataset.panel);
+      });
+    });
+  </script>
 </body>
 </html>
