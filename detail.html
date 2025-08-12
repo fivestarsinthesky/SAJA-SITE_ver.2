@@ -188,8 +188,12 @@ body, .title, .actions a, .btn {
 </head>
 <body>
   <header>
-    <a href="./index.html">← 목록으로</a>
+    <a href="./index.html" class="btn-back">← 목록으로</a>
     <div id="hdrTitle"></div>
+    <div class="actions">
+      <a href="#lyrics">가사</a>
+      <a href="#more">더보기</a>
+    </div>
   </header>
 
   <div class="page">
@@ -252,7 +256,6 @@ body, .title, .actions a, .btn {
   h1{font-size:18px;margin:0 0 10px 0}
   .mono{white-space:pre-wrap;word-break:keep-all}
 </style></head><body>
-  <h1>${title}</h1>
   <div class="mono">${body}</div>
 </body></html>`;
   }
