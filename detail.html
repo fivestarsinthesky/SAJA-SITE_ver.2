@@ -199,7 +199,6 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
     loadNext();
   })();
 </script>
-<link rel="preload" href="/assets/fonts/GmarketSansTTFLight.woff" as="font" type="font/woff" crossorigin>
 </head>
 <body>
   <header>
@@ -279,11 +278,7 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
     font-display: swap;
   }
   body{font-family:'GmarketSansLight', system-ui, "Noto Sans KR", sans-serif;}
-
-  /* Reduce font swap flash inside iframe */
-  body{opacity:0; transition:opacity .15s ease;}
-  .ready{opacity:1;}
-</style><link rel="preload" href="/assets/fonts/GmarketSansTTFLight.woff" as="font" type="font/woff" crossorigin></head><body><script>try{document.fonts.load("1em GmarketSansLight").then(function(){document.body.classList.add("ready");});setTimeout(function(){document.body.classList.add("ready");},300);}catch(e){document.body.classList.add("ready");}</script>
+</style></head><body>
   <h1>${title}</h1>
   <div class="mono">${body}</div>
 </body></html>`;
