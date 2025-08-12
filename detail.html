@@ -1,8 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="ko">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>상세 | 사자왕자의 노래방 (iframe 탭 버전)</title>
 <style>
   :root{
@@ -61,42 +62,78 @@
     background: rgba(255,255,255,.05);
     pointer-events:none;
   }
+
+/* === overrides: make detail page use full viewport width === */
+.page{ max-width:none !important; width:100vw !important; margin:0 auto; }
 </style>
 </head>
 <body>
-  <header>
-    <a href="./index.html">← 목록으로</a>
-    <div id="hdrTitle"></div>
-  </header>
+<header>
+<a href="./index.html">← 목록으로</a>
+<div id="hdrTitle"></div>
+</header>
+<div class="page">
+<div class="pc-grid">
+<div class="left-col">
+<div class="card player">
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" id="yt"></iframe>
+</div>
+<div class="card">
+<div aria-label="콘텐츠 선택" class="menu" role="group">
+<button aria-pressed="true" class="tab" data-panel="lyrics">가사</button>
+<button aria-pressed="false" class="tab" data-panel="more">더보기</button>
+</div>
+</div>
+</div>
+<div class="content card">
+<div class="content-header">
+<h2 class="content-title" id="cTitle">가사</h2>
+<div class="content-meta" id="cMeta"></div>
+</div>
+<div class="content-body">
+<iframe class="content-iframe" id="panelFrame" title="가사/더보기"></iframe>
+</div>
+</div>
+</div>
+</div>
 
-  <div class="page">
-    <div class="pc-grid">
-      <div class="left-col">
-        <div class="card player">
-          <iframe id="yt" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-        <div class="card">
-          <div class="menu" role="group" aria-label="콘텐츠 선택">
-            <button class="tab" data-panel="lyrics" aria-pressed="true">가사</button>
-            <button class="tab" data-panel="more" aria-pressed="false">더보기</button>
-          </div>
-        </div>
-      </div>
+<script>
+  // Robust TRACKS loader: tries multiple paths, then initializes when ready
+  (function(){
+    var tried = [];
+    var candidates = [
+      "./assets/data/tracks.js?v=cache",
+      "./assets/data/tracks.js",
+      "../assets/data/tracks.js",
+      "/assets/data/tracks.js"
+    ];
+    function loadNext(){
+      if (window.TRACKS && Array.isArray(window.TRACKS)) { return ready(); }
+      if (!candidates.length) { console.error("TRACKS 로드 실패", tried); return ready(true); }
+      var src = candidates.shift();
+      tried.push(src);
+      var el = document.createElement("script");
+      el.src = src;
+      el.async = true;
+      el.onload = function(){ setTimeout(function(){
+        if (window.TRACKS && Array.isArray(window.TRACKS)) { ready(); }
+        else { loadNext(); }
+      }, 0); };
+      el.onerror = loadNext;
+      document.head.appendChild(el);
+    }
+    function ready(failed){
+      document.dispatchEvent(new CustomEvent("tracks-ready", { detail: { failed: !!failed } }));
+    }
+    loadNext();
+  })();
+</script>
 
-      <div class="content card">
-        <div class="content-header">
-          <h2 id="cTitle" class="content-title">가사</h2>
-          <div id="cMeta" class="content-meta"></div>
-        </div>
-        <div class="content-body">
-          <iframe id="panelFrame" class="content-iframe" title="가사/더보기"></iframe>
-        </div>
-      </div>
-    </div>
-  </div>
+<script>
+// === detail init (runs after TRACKS is loaded) ===
+(function(){
+  function initDetail(){
 
-  <script src="./assets/data/tracks.js?v=cache"></script>
-  <script>
     function q(k){ return new URL(location.href).searchParams.get(k); }
     function extractYouTubeId(url){
       if(!url) return "";
@@ -140,13 +177,17 @@
 
     // iframe 패널: srcdoc로 탭 전환
     const $panel = document.getElementById('panelFrame');
+function setPanel(html){
+  try{ $panel.srcdoc = html; }catch(e){}
+  try{ $panel.src = "data:text/html;charset=utf-8," + encodeURIComponent(html); }catch(e){}
+}
     function show(which){
       if(which==='more'){
         document.getElementById('cTitle').textContent = '더보기';
-        $panel.srcdoc = toHtml('더보기', esc(data.more||'추가 정보가 없습니다.').replace(/\n/g,'<br>'));
+        setPanel(toHtml('더보기', esc(data.more||'추가 정보가 없습니다.').replace(/\n/g,'<br>')));
       }else{
         document.getElementById('cTitle').textContent = '가사';
-        $panel.srcdoc = toHtml('가사', esc(data.lyrics||'가사가 아직 준비되지 않았습니다.').replace(/\n/g,'<br>'));
+        setPanel(toHtml('가사', esc(data.lyrics||'가사가 아직 준비되지 않았습니다.').replace(/\n/g,'<br>')));
       }
     }
     show('lyrics');
@@ -158,6 +199,12 @@
         show(btn.dataset.panel);
       });
     });
-  </script>
+  
+  }
+  document.addEventListener("tracks-ready", function(ev){
+    try { initDetail(); } catch(e){ console.error("initDetail error", e); }
+  });
+})();
+</script>
 </body>
 </html>
