@@ -159,7 +159,23 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
 .menu-card{ display:none !important; }
 
 /* 가사/더보기 iframe 여백 추가하여 스크롤바 잘림 방지 */
-.content-iframe { }
+.content-iframe {
+  box-sizing: border-box;
+  padding-right: 8px;
+}
+
+
+@media (max-width: 768px) {
+  .content-iframe { padding-bottom: 12px; }
+}
+
+
+@media (max-width: 768px) {
+  /* Title: YouTube: Gasa 1:4:5 ratio */
+  .title { flex: 1 1 10%; }
+  .content-iframe { flex: 4 1 50%; }
+  .gasa { flex: 5 1 40%; }
+}
 
 </style>
 
@@ -199,9 +215,13 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
 </head>
 <body>
   <header>
-    <a href="./index.html">← 목록으로</a>
-    <div id="hdrTitle"></div>
-  </header>
+  <a href="./index.html" class="btn-back">← 목록으로</a>
+  <div id="hdrTitle"></div>
+  <div class="actions">
+    <a href="#lyrics">가사</a>
+    <a href="#more">더보기</a>
+  </div>
+</header>
 
   <div class="page">
     <div class="pc-grid">
@@ -262,6 +282,15 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
   html,body{height:100%} body{margin:0;padding:14px 14px 18px;background:#181818;color:#fff;font-family:system-ui,"Noto Sans KR",sans-serif;line-height:1.55;font-size:16px;overflow:auto;-webkit-overflow-scrolling:touch}
   h1{font-size:18px;margin:0 0 10px 0}
   .mono{white-space:pre-wrap;word-break:keep-all}
+
+  @font-face {
+    font-family: 'GmarketSansLight';
+    src: url('/assets/fonts/GmarketSansTTFLight.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+  body{font-family:'GmarketSansLight', system-ui, "Noto Sans KR", sans-serif;}
 </style></head><body>
   <h1>${title}</h1>
   <div class="mono">${body}</div>
