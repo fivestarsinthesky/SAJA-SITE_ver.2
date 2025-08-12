@@ -16,7 +16,7 @@
         display:flex; flex-direction:column; overflow:hidden; }
 
   /* 상단 바 */
-  header{ flex:0 0 auto; display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid #eee; }
+  header{ flex:0 0 auto; display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid #eee; flex-wrap:nowrap; }
   header a{ text-decoration:none; font-weight:700; color:#06f; }
   #hdrTitle{ font-weight:800; }
 
@@ -46,7 +46,7 @@
 
   /* 우측 콘텐츠 카드: 내부는 iframe만 스크롤 */
   .content.card{ display:flex; flex-direction:column; height:100%; min-height:0; overflow:hidden; }
-  .content-header{ padding:12px 14px 8px; border-bottom:1px solid #f0f0f0; }
+  .content-header{ display:none; }
   .content-title{ margin:0; font-size:18px; }
   .content-meta{ margin-top:4px; opacity:.7; font-size:13px; }
 
@@ -150,6 +150,13 @@ body, .title, .actions a, .btn {
   border-color: #999;
 }
 
+
+/* header tightening */
+#hdrTitle{ flex:1 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:clamp(14px, 4vw, 20px); }
+header .actions{ display:flex; gap:6px; flex-wrap:nowrap; flex:0 0 auto; }
+header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw, 6px) clamp(6px, 1.2vw, 10px); }
+
+.menu-card{ display:none !important; }
 </style>
 
 <!-- TRACKS 로더 -->
@@ -188,12 +195,8 @@ body, .title, .actions a, .btn {
 </head>
 <body>
   <header>
-    <a href="./index.html" class="btn-back">← 목록으로</a>
+    <a href="./index.html">← 목록으로</a>
     <div id="hdrTitle"></div>
-    <div class="actions">
-      <a href="#lyrics">가사</a>
-      <a href="#more">더보기</a>
-    </div>
   </header>
 
   <div class="page">
@@ -203,7 +206,7 @@ body, .title, .actions a, .btn {
           <a id="openYtBtn" class="open-yt" href="#">YouTube에서 보기</a>
           <iframe id="yt" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
-        <div class="card">
+        <div class="card menu-card">
           <div class="menu" role="group" aria-label="콘텐츠 선택">
             <button class="tab" data-panel="lyrics" aria-pressed="true">가사</button>
             <button class="tab" data-panel="more" aria-pressed="false">더보기</button>
@@ -256,6 +259,7 @@ body, .title, .actions a, .btn {
   h1{font-size:18px;margin:0 0 10px 0}
   .mono{white-space:pre-wrap;word-break:keep-all}
 </style></head><body>
+  <h1>${title}</h1>
   <div class="mono">${body}</div>
 </body></html>`;
   }
@@ -294,6 +298,17 @@ body, .title, .actions a, .btn {
       }
     }
     show('lyrics');
+
+    // 헤더 액션 버튼 연결
+    const $actLyrics = document.querySelector('header .actions a[href="#lyrics"]');
+    const $actMore   = document.querySelector('header .actions a[href="#more"]');
+    function setHeaderPressed(which){
+      if ($actLyrics) $actLyrics.setAttribute('aria-pressed', which==='lyrics' ? 'true' : 'false');
+      if ($actMore)   $actMore.setAttribute('aria-pressed',   which==='more'   ? 'true' : 'false');
+    }
+    if ($actLyrics) $actLyrics.addEventListener('click', function(e){ e.preventDefault(); show('lyrics'); setHeaderPressed('lyrics'); });
+    if ($actMore)   $actMore.addEventListener('click',   function(e){ e.preventDefault(); show('more');   setHeaderPressed('more');   });
+
 
     document.querySelectorAll('.menu .tab').forEach(btn=>{
       btn.addEventListener('click', ()=>{
