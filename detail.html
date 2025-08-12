@@ -291,6 +291,27 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
     font-display: swap;
   }
   body{font-family:'GmarketSansLight', system-ui, "Noto Sans KR", sans-serif;}
+
+  /* === Lyrics/More panel: custom scrollbar === */
+  /* WebKit */
+  body::-webkit-scrollbar { width: 12px; }
+  body::-webkit-scrollbar-track { background: transparent; }
+  body::-webkit-scrollbar-thumb {
+    background: rgba(157, 127, 232, 0.55); /* 연보라 */
+    border-radius: 8px;
+    border: 3px solid rgba(0,0,0,0); /* 안쪽 여백 효과 */
+    background-clip: padding-box;
+  }
+  body::-webkit-scrollbar-thumb:hover {
+    background: rgba(134, 103, 209, 0.85); /* hover 진보라 */
+    background-clip: padding-box;
+  }
+
+  /* Firefox */
+  html, body { scrollbar-width: thin; scrollbar-color: rgba(157,127,232,0.8) transparent; }
+
+  /* 스크롤 관련 품질 설정 */
+  body{ overscroll-behavior: contain; }
 </style></head><body>
   <h1>${title}</h1>
   <div class="mono">${body}</div>
