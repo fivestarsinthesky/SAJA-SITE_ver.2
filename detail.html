@@ -157,6 +157,13 @@ header .actions{ display:flex; gap:6px; flex-wrap:nowrap; flex:0 0 auto; }
 header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw, 6px) clamp(6px, 1.2vw, 10px); }
 
 .menu-card{ display:none !important; }
+
+/* 가사/더보기 iframe 여백 추가하여 스크롤바 잘림 방지 */
+.content-iframe {
+  box-sizing: border-box;
+  padding-right: 8px;
+}
+
 </style>
 
 <!-- TRACKS 로더 -->
@@ -258,6 +265,15 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
   html,body{height:100%} body{margin:0;padding:14px 14px 18px;background:#181818;color:#fff;font-family:system-ui,"Noto Sans KR",sans-serif;line-height:1.55;font-size:16px;overflow:auto;-webkit-overflow-scrolling:touch}
   h1{font-size:18px;margin:0 0 10px 0}
   .mono{white-space:pre-wrap;word-break:keep-all}
+
+  @font-face {
+    font-family: 'GmarketSansLight';
+    src: url('/assets/fonts/GmarketSansTTFLight.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+  body{font-family:'GmarketSansLight', system-ui, "Noto Sans KR", sans-serif;}
 </style></head><body>
   <h1>${title}</h1>
   <div class="mono">${body}</div>
