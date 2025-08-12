@@ -161,7 +161,7 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
 /* 가사/더보기 iframe 여백 추가하여 스크롤바 잘림 방지 */
 .content-iframe {
   box-sizing: border-box;
-  padding-right: 8px;
+  padding-right: 0;
 }
 
 
@@ -292,26 +292,22 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
   }
   body{font-family:'GmarketSansLight', system-ui, "Noto Sans KR", sans-serif;}
 
-  /* === Lyrics/More panel: custom scrollbar === */
-  /* WebKit */
-  body::-webkit-scrollbar { width: 12px; }
+  /* === overlay-like transparent scrollbar (no gutter reservation) === */
+  /* 최대한 레이아웃 차지하지 않도록 힌트 */
+  html, body { scrollbar-gutter: auto; }
+  body{ overscroll-behavior: contain; }
+
+  /* WebKit: 기본 투명, hover 시만 살짝 표시 */
+  body::-webkit-scrollbar { width: 12px; background: transparent; }
   body::-webkit-scrollbar-track { background: transparent; }
-  body::-webkit-scrollbar-thumb {
-    background: rgba(157, 127, 232, 0.55); /* 연보라 */
-    border-radius: 8px;
-    border: 3px solid rgba(0,0,0,0); /* 안쪽 여백 효과 */
-    background-clip: padding-box;
-  }
-  body::-webkit-scrollbar-thumb:hover {
-    background: rgba(134, 103, 209, 0.85); /* hover 진보라 */
-    background-clip: padding-box;
+  body::-webkit-scrollbar-thumb { background: rgba(0,0,0,0); border-radius: 8px; }
+  @media (hover:hover){
+    body:hover::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.28); }
+    body:hover::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.42); }
   }
 
   /* Firefox */
-  html, body { scrollbar-width: thin; scrollbar-color: rgba(157,127,232,0.8) transparent; }
-
-  /* 스크롤 관련 품질 설정 */
-  body{ overscroll-behavior: contain; }
+  html, body { scrollbar-width: thin; scrollbar-color: transparent transparent; }
 </style></head><body>
   <h1>${title}</h1>
   <div class="mono">${body}</div>
