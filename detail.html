@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>상세 | 사자왕자의 노래방 (step3: nocookie + 외부열기)</title>
 <style>
   :root{
@@ -166,7 +167,7 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
 
 
 @media (max-width: 768px) {
-  .content-iframe { padding-bottom: 12px; }
+  .content-iframe {  }
 }
 
 
@@ -177,8 +178,17 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
   .gasa { flex: 5 1 40%; }
 }
 
-</style>
 
+.btn-back, .actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content.card {
+  margin-bottom: 12px;
+}
+</style>
 <!-- TRACKS 로더 -->
 <script>
   (function(){
@@ -214,42 +224,39 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
 </script>
 </head>
 <body>
-  <header>
-  <a href="./index.html" class="btn-back">← 목록으로</a>
-  <div id="hdrTitle"></div>
-  <div class="actions">
-    <a href="#lyrics">가사</a>
-    <a href="#more">더보기</a>
-  </div>
+<header>
+<a class="btn-back" href="./index.html">🏠</a>
+<div id="hdrTitle"></div>
+<div class="actions">
+<a href="#lyrics">가사</a>
+<a href="#more">더보기</a>
+</div>
 </header>
-
-  <div class="page">
-    <div class="pc-grid">
-      <div class="left-col">
-        <div class="card player">
-          <a id="openYtBtn" class="open-yt" href="#">YouTube에서 보기</a>
-          <iframe id="yt" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-        <div class="card menu-card">
-          <div class="menu" role="group" aria-label="콘텐츠 선택">
-            <button class="tab" data-panel="lyrics" aria-pressed="true">가사</button>
-            <button class="tab" data-panel="more" aria-pressed="false">더보기</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="content card">
-        <div class="content-header">
-          <h2 id="cTitle" class="content-title">가사</h2>
-          <div id="cMeta" class="content-meta"></div>
-        </div>
-        <div class="content-body">
-          <iframe id="panelFrame" class="content-iframe" title="가사/더보기"></iframe>
-        </div>
-      </div>
-    </div>
-  </div>
-
+<div class="page">
+<div class="pc-grid">
+<div class="left-col">
+<div class="card player">
+<a class="open-yt" href="#" id="openYtBtn">YouTube에서 보기</a>
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" id="yt"></iframe>
+</div>
+<div class="card menu-card">
+<div aria-label="콘텐츠 선택" class="menu" role="group">
+<button aria-pressed="true" class="tab" data-panel="lyrics">가사</button>
+<button aria-pressed="false" class="tab" data-panel="more">더보기</button>
+</div>
+</div>
+</div>
+<div class="content card">
+<div class="content-header">
+<h2 class="content-title" id="cTitle">가사</h2>
+<div class="content-meta" id="cMeta"></div>
+</div>
+<div class="content-body">
+<iframe class="content-iframe" id="panelFrame" title="가사/더보기"></iframe>
+</div>
+</div>
+</div>
+</div>
 <script>
 (function(){
   function q(k){ return new URL(location.href).searchParams.get(k); }
