@@ -16,7 +16,7 @@
         display:flex; flex-direction:column; overflow:hidden; }
 
   /* 상단 바 */
-  header{ flex:0 0 auto; display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid #eee; }
+  header{ flex:0 0 auto; display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid #eee; flex-wrap:nowrap; }
   header a{ text-decoration:none; font-weight:700; color:#06f; }
   #hdrTitle{ font-weight:800; }
 
@@ -46,7 +46,7 @@
 
   /* 우측 콘텐츠 카드: 내부는 iframe만 스크롤 */
   .content.card{ display:flex; flex-direction:column; height:100%; min-height:0; overflow:hidden; }
-  .content-header{ padding:12px 14px 8px; border-bottom:1px solid #f0f0f0; }
+  .content-header{ display:none; }
   .content-title{ margin:0; font-size:18px; }
   .content-meta{ margin-top:4px; opacity:.7; font-size:13px; }
 
@@ -70,6 +70,113 @@
 
   /* === overrides: detail page uses full viewport width === */
   .page{ max-width:none !important; width:100vw !important; margin:0 auto; }
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+.title-row .title {
+  font-size: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.title-row .actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.title-row .actions a {
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  text-decoration: none;
+  font-size: 14px;
+}
+@media (max-width: 768px) {
+  .title-row .title {
+    font-size: 16px;
+  }
+  .title-row .actions a {
+    font-size: 12px;
+    padding: 3px 6px;
+  }
+}
+
+
+@font-face {
+  font-family: 'GmarketSansLight';
+  src: url('assets/fonts/GmarketSansTTFLight.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+body, .title, .actions a, .btn {
+  font-family: 'GmarketSansLight', system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", Arial, sans-serif !important;
+}
+
+/* 가사·더보기 버튼 - 연보라 포인트 */
+.actions a {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background-color: #9d7fe8;
+  color: #fff;
+  border: none;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+.actions a:hover {
+  background-color: #8667d1;
+}
+
+/* 목록으로 버튼 - 회색 중립 */
+.btn-back {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.btn-back:hover {
+  background-color: #e0e0e0;
+  border-color: #999;
+}
+
+
+/* header tightening */
+#hdrTitle{ flex:1 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:clamp(14px, 4vw, 20px); }
+header .actions{ display:flex; gap:6px; flex-wrap:nowrap; flex:0 0 auto; }
+header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw, 6px) clamp(6px, 1.2vw, 10px); }
+
+.menu-card{ display:none !important; }
+
+/* 가사/더보기 iframe 여백 추가하여 스크롤바 잘림 방지 */
+.content-iframe {
+  box-sizing: border-box;
+  padding-right: 0;
+}
+
+
+@media (max-width: 768px) {
+  .content-iframe { padding-bottom: 12px; }
+}
+
+
+@media (max-width: 768px) {
+  /* Title: YouTube: Gasa 1:4:5 ratio */
+  .title { flex: 1 1 10%; }
+  .content-iframe { flex: 4 1 50%; }
+  .gasa { flex: 5 1 40%; }
+}
+
 </style>
 
 <!-- TRACKS 로더 -->
@@ -108,18 +215,22 @@
 </head>
 <body>
   <header>
-    <a href="./index.html">← 목록으로</a>
-    <div id="hdrTitle"></div>
-  </header>
+  <a href="./index.html" class="btn-back">← 목록으로</a>
+  <div id="hdrTitle"></div>
+  <div class="actions">
+    <a href="#lyrics">가사</a>
+    <a href="#more">더보기</a>
+  </div>
+</header>
 
   <div class="page">
     <div class="pc-grid">
       <div class="left-col">
         <div class="card player">
-          <a id="openYtBtn" class="open-yt" href="#" target="_blank" rel="noopener">YouTube에서 보기</a>
+          <a id="openYtBtn" class="open-yt" href="#">YouTube에서 보기</a>
           <iframe id="yt" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
-        <div class="card">
+        <div class="card menu-card">
           <div class="menu" role="group" aria-label="콘텐츠 선택">
             <button class="tab" data-panel="lyrics" aria-pressed="true">가사</button>
             <button class="tab" data-panel="more" aria-pressed="false">더보기</button>
@@ -171,6 +282,15 @@
   html,body{height:100%} body{margin:0;padding:14px 14px 18px;background:#181818;color:#fff;font-family:system-ui,"Noto Sans KR",sans-serif;line-height:1.55;font-size:16px;overflow:auto;-webkit-overflow-scrolling:touch}
   h1{font-size:18px;margin:0 0 10px 0}
   .mono{white-space:pre-wrap;word-break:keep-all}
+
+  @font-face {
+    font-family: 'GmarketSansLight';
+    src: url('/assets/fonts/GmarketSansTTFLight.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+  body{font-family:'GmarketSansLight', system-ui, "Noto Sans KR", sans-serif;}
 </style></head><body>
   <h1>${title}</h1>
   <div class="mono">${body}</div>
@@ -211,6 +331,17 @@
       }
     }
     show('lyrics');
+
+    // 헤더 액션 버튼 연결
+    const $actLyrics = document.querySelector('header .actions a[href="#lyrics"]');
+    const $actMore   = document.querySelector('header .actions a[href="#more"]');
+    function setHeaderPressed(which){
+      if ($actLyrics) $actLyrics.setAttribute('aria-pressed', which==='lyrics' ? 'true' : 'false');
+      if ($actMore)   $actMore.setAttribute('aria-pressed',   which==='more'   ? 'true' : 'false');
+    }
+    if ($actLyrics) $actLyrics.addEventListener('click', function(e){ e.preventDefault(); show('lyrics'); setHeaderPressed('lyrics'); });
+    if ($actMore)   $actMore.addEventListener('click',   function(e){ e.preventDefault(); show('more');   setHeaderPressed('more');   });
+
 
     document.querySelectorAll('.menu .tab').forEach(btn=>{
       btn.addEventListener('click', ()=>{
