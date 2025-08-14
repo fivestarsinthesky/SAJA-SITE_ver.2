@@ -52,14 +52,16 @@
   .content-title{ margin:0; font-size:18px; }
   .content-meta{ margin-top:4px; opacity:.7; font-size:13px; }
 
-  .content-body{ flex:1 1 auto; min-height:0; padding:14px; }
+  .content-body{ flex:1 1 auto; min-height:0; padding:0 !important; }
   .content-iframe{ display:block; width:100%; height:100%; border:0; border-radius:12px; }
 
   /* 모바일: 상하 2분할 */
-  @media (min-width:901px){ .content-body{ padding:20px; } }
+  
 
 @media (max-width:900px){
-  .left-col > .card + .card{ margin-top:16px; }
+  .left-col > .card + .card{ margin-top:16px; 
+  .content.card { margin-top: 16px; }
+}
   .page{ padding:0; }
     .pc-grid{ display:block; height:100%; }
     .left-col{ display:block; }
@@ -173,11 +175,6 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
 
 
 @media (max-width: 768px) {
-  .content-iframe {  }
-}
-
-
-@media (max-width: 768px) {
   /* Title: YouTube: Gasa 1:4:5 ratio */
   .title { flex: 1 1 10%; }
   .content-iframe { flex: 4 1 50%; }
@@ -193,8 +190,6 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
 
 .content.card { margin-bottom: 16px; }
 
-@media (max-width:900px){ .content.card{ display:flex; flex-direction:column; height:100%; min-height:0; overflow:hidden;
-  background:#181818; border:1px solid #222; color:#fff; } .left-col > .card + .card{ margin-top:12px; } }
 </style>
 <!-- TRACKS 로더 -->
 <script>
