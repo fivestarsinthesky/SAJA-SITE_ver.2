@@ -59,38 +59,21 @@
   @media (min-width:901px){ .content-body{ padding:20px; } }
 
 @media (max-width:900px){
-  /* 페이지: 스크롤 없음 + 바깥 여백 (헤더는 상단 0으로 딱 붙게) */
   .page{
-    padding: 0 12px 12px;
+    padding: 0 12px 16px;
     overflow: hidden;
   }
-
-  /* 상하 스택 + 간격 16px, 헤더 아래 영역을 채움 */
-  .pc-grid{
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    height: 100%;
-    min-height: 0;
-  }
+  .pc-grid{ display:block; height:auto; min-height:0; }
   .left-col{ display:block; }
-
-  /* 유튜브 패널은 고정 높이, 가사 패널은 남은 공간 채움 */
-  .player{ flex: 0 0 auto; }
   .content.card{
-    flex: 1 1 auto;
-    min-height: 0;
-    margin: 0; /* 간격은 gap으로 통일 */
+    height:auto;
+    margin-top:16px;
+    margin-bottom:16px;
   }
-
-  /* 우측 패널 내부만 스크롤 */
   .content-body{
-    padding: 0;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .content-iframe{
-    height: 100%;
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
+    padding:0;
   }
 }
   .page{ padding:0; }
@@ -227,38 +210,21 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
 .content.card { margin-bottom: 16px; }
 
 @media (max-width:900px){
-  /* 페이지: 스크롤 없음 + 바깥 여백 (헤더는 상단 0으로 딱 붙게) */
   .page{
-    padding: 0 12px 12px;
+    padding: 0 12px 16px;
     overflow: hidden;
   }
-
-  /* 상하 스택 + 간격 16px, 헤더 아래 영역을 채움 */
-  .pc-grid{
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    height: 100%;
-    min-height: 0;
-  }
+  .pc-grid{ display:block; height:auto; min-height:0; }
   .left-col{ display:block; }
-
-  /* 유튜브 패널은 고정 높이, 가사 패널은 남은 공간 채움 */
-  .player{ flex: 0 0 auto; }
   .content.card{
-    flex: 1 1 auto;
-    min-height: 0;
-    margin: 0; /* 간격은 gap으로 통일 */
+    height:auto;
+    margin-top:16px;
+    margin-bottom:16px;
   }
-
-  /* 우측 패널 내부만 스크롤 */
   .content-body{
-    padding: 0;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .content-iframe{
-    height: 100%;
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
+    padding:0;
   }
 } .left-col > .card + .card{ margin-top:12px; } }
 </style>
