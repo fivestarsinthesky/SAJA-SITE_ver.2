@@ -106,6 +106,47 @@
 }
 body { font-family: 'GmarketSansLight', system-ui, 'Noto Sans KR', sans-serif; }
 
+
+/* ===== Modal (Lyrics & More) unified glass style ===== */
+.lp-modal[id^="modal"] .lp-modal__body{
+  background: transparent;              /* 스크롤 영역은 투명 */
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.lp-modal[id^="modal"] .lp-modal__panel{
+  background: rgba(255,255,255,0.85);   /* 유리판 느낌 */
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* 더보기/가사 공통: 내부 여백 균형 */
+.lp-modal[id^="modal"] .lp-modal__panel,
+.lp-modal[id^="modal"] .lp-modal__body{
+  padding: 16px;
+}
+
+@media (max-width: 640px){
+  .lp-modal[id^="modal"] .lp-modal__panel{
+    background: rgba(255,255,255,0.90);
+    border-radius: 14px;
+  }
+}
+
+/* (선택) 스크롤바 미세 스타일 */
+.lp-modal[id^="modal"] .lp-modal__body::-webkit-scrollbar{
+  width: 10px;
+}
+.lp-modal[id^="modal"] .lp-modal__body::-webkit-scrollbar-thumb{
+  border-radius: 10px;
+  background: rgba(0,0,0,0.2);
+}
+.lp-modal[id^="modal"] .lp-modal__body::-webkit-scrollbar-track{
+  background: transparent;
+}
+
 </style>
 </head>
 <body>
