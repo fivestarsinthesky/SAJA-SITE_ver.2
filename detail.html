@@ -222,6 +222,16 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
     loadNext();
   })();
 </script>
+
+<style>
+/* Modal transparency for 더보기(modal_more*) and 가사(modal_lyrics*) */
+.lp-modal[id^="modal_more"] .lp-modal__body,
+.lp-modal[id^="modal_lyrics"] .lp-modal__body {
+    background-color: rgba(255, 255, 255, 0.8) !important; /* white with transparency */
+    backdrop-filter: blur(8px); /* optional blur effect */
+    border-radius: 12px;
+}
+</style>
 </head>
 <body>
 <header>
