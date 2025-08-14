@@ -22,7 +22,7 @@
   #hdrTitle{ font-weight:800; }
 
   /* 본문 레이아웃 (한 화면 고정) */
-  .page{ flex:1 1 auto; max-width:var(--maxw); margin:0 auto; padding:0 16px 16px; overflow:hidden; }
+  .page{ flex:1 1 auto; max-width:var(--maxw); margin:0 auto; padding:0; overflow:hidden; }
   .pc-grid{ display:grid; gap:var(--gap); grid-template-columns:var(--left) var(--right); height:100%; min-height:0; }
   .left-col{ display:grid; gap:var(--gap); grid-template-rows:auto auto; min-height:0; }
 
@@ -59,21 +59,40 @@
   @media (min-width:901px){ .content-body{ padding:20px; } }
 
 @media (max-width:900px){
+  /* 페이지: 화면 높이를 꽉 채우고(헤더 제외), 페이지 스크롤은 금지 */
   .page{
-    padding: 0 12px 16px;
-    overflow: hidden;
+    padding: 0 12px 12px;        /* 하단 패딩만 살짝 */
+    overflow: hidden;             /* 페이지 스크롤 X */
+    min-height: 100vh;            /* 남는 하단 공간 제거 */
   }
-  .pc-grid{ display:block; height:auto; min-height:0; }
+
+  /* 그리드: 페이지 안에서 남은 공간을 전부 차지 */
+  .pc-grid{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
   .left-col{ display:block; }
+
+  /* 유튜브는 고정(비율 유지), 가사 패널은 남은 공간 전부 */
+  .player{ flex: 0 0 auto; }
   .content.card{
-    height:auto;
-    margin-top:16px;
-    margin-bottom:16px;
+    flex: 1 1 auto;
+    min-height: 0;
+    margin: 0;                    /* 간격은 gap으로 통일 */
   }
+
+  /* 가사 패널 내부만 스크롤 */
   .content-body{
-    overflow:auto;
-    -webkit-overflow-scrolling:touch;
-    padding:0;
+    padding: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .content-iframe{
+    height: 100%;
   }
 }
   .page{ padding:0; }
@@ -92,7 +111,7 @@
   }
 
   /* === overrides: detail page uses full viewport width === */
-  .page{ max-width:none !important; width:100% !important; margin:0 auto; }
+  .page{ max-width:none !important; width:100vw !important; margin:0 auto; }
 
 .title-row {
   display: flex;
@@ -210,21 +229,40 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
 .content.card { margin-bottom: 16px; }
 
 @media (max-width:900px){
+  /* 페이지: 화면 높이를 꽉 채우고(헤더 제외), 페이지 스크롤은 금지 */
   .page{
-    padding: 0 12px 16px;
-    overflow: hidden;
+    padding: 0 12px 12px;        /* 하단 패딩만 살짝 */
+    overflow: hidden;             /* 페이지 스크롤 X */
+    min-height: 100vh;            /* 남는 하단 공간 제거 */
   }
-  .pc-grid{ display:block; height:auto; min-height:0; }
+
+  /* 그리드: 페이지 안에서 남은 공간을 전부 차지 */
+  .pc-grid{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
   .left-col{ display:block; }
+
+  /* 유튜브는 고정(비율 유지), 가사 패널은 남은 공간 전부 */
+  .player{ flex: 0 0 auto; }
   .content.card{
-    height:auto;
-    margin-top:16px;
-    margin-bottom:16px;
+    flex: 1 1 auto;
+    min-height: 0;
+    margin: 0;                    /* 간격은 gap으로 통일 */
   }
+
+  /* 가사 패널 내부만 스크롤 */
   .content-body{
-    overflow:auto;
-    -webkit-overflow-scrolling:touch;
-    padding:0;
+    padding: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .content-iframe{
+    height: 100%;
   }
 } .left-col > .card + .card{ margin-top:12px; } }
 </style>
