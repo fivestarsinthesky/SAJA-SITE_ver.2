@@ -268,6 +268,19 @@ body{
   box-sizing:border-box;
   padding:0 0 max(16px, env(safe-area-inset-bottom));
 }
+</style><style id="mobile-gap-a-scheme">
+/* === A안: 부모 gap 하나로만 간격 관리 (모바일) === */
+@media (max-width:900px){
+  .pc-grid{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:10px !important;              /* ← 유일한 간격 소스 */
+    min-height:0;
+  }
+  .pc-grid > *{ margin:0 !important; } /* ← 남아있는 자식 margin 싹 제거 */
+  .left-col{ margin:0 !important; }    /* 안전장치: 개별 선언 제거 */
+  .content.card{ margin:0 !important; }/* 안전장치: 반대쪽 margin 제거 */
+}
 </style></head>
 <body>
 <header>
