@@ -22,7 +22,7 @@
   #hdrTitle{ font-weight:800; }
 
   /* 본문 레이아웃 (한 화면 고정) */
-  .page{ flex:1 1 auto; max-width:var(--maxw); margin:0 auto; padding:0; overflow:hidden; }
+  .page{ flex:1 1 auto; max-width:var(--maxw); margin:0 auto; padding:16px; overflow:hidden; }
   .pc-grid{ display:grid; gap:var(--gap); grid-template-columns:var(--left) var(--right); height:100%; min-height:0; }
   .left-col{ display:grid; gap:var(--gap); grid-template-rows:auto auto; min-height:0; }
 
@@ -47,53 +47,26 @@
 
   /* 우측 콘텐츠 카드: 내부는 iframe만 스크롤 */
   .content.card{ display:flex; flex-direction:column; height:100%; min-height:0; overflow:hidden;
-  background:#181818; border:1px solid #222; color:#fff; }
+  background:#181818;                 /* 패널 자체를 검은색으로 */
+  border:1px solid #222;              /* 은은한 경계 */
+  color:#fff;                         /* 패널 영역 기본 글자색 */
+}
   .content-header{ display:none; }
   .content-title{ margin:0; font-size:18px; }
   .content-meta{ margin-top:4px; opacity:.7; font-size:13px; }
 
-  .content-body{ flex:1 1 auto; min-height:0; padding:14px; }
+  .content-body{ flex:1 1 auto; min-height:0; }
   .content-iframe{ display:block; width:100%; height:100%; border:0; border-radius:12px; }
 
-  /* 데스크톱(>=901px) */
-  @media (min-width:901px){
-    .content-body{ padding:20px; }
-  }
-
-  /* 모바일(<=900px) */
+  /* 모바일: 상하 2분할 */
   @media (max-width:900px){
-    /* 페이지: 헤더 제외 화면을 채우고 하단 16px 여백 */
-    .page{
-      padding: 0 12px 0;
-      overflow: hidden;
-      
-    }
-
-    /* 패널: 세로 스택 + 간격 16px */
-    .pc-grid{
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      flex:1 1 auto;
-      min-height:0;
-    }
-    
-
-    /* 유튜브는 고정, 오른쪽 패널은 남은 높이 */
-    .player{ flex:0 0 auto; }
-    .content.card{
-      flex:1 1 auto;
-      min-height:0;
-      margin:0;
-    }
-
-    /* 패널 내부 스크롤 */
-    .content-body{
-      padding:0;
-      overflow:auto;
-      -webkit-overflow-scrolling:touch;
-    }
-    .content-iframe{ height:100%; }
+    .pc-grid{ display:block; height:100%; }
+    .left-col{ display:block; }
+    .content.card{ display:flex; flex-direction:column; height:100%; min-height:0; overflow:hidden;
+  background:#181818;                 /* 패널 자체를 검은색으로 */
+  border:1px solid #222;              /* 은은한 경계 */
+  color:#fff;                         /* 패널 영역 기본 글자색 */
+}
   }
 
   /* 은은한 오버레이(옵션) */
@@ -105,180 +78,123 @@
   }
 
   /* === overrides: detail page uses full viewport width === */
-  .page{ max-width:none !important; width:100% !important; margin:0 auto; }
+  .page{ max-width:none !important; width:100vw !important; margin:0 auto; }
 
-  .title-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    flex-wrap: nowrap;
-  }
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+.title-row .title {
+  font-size: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.title-row .actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.title-row .actions a {
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  text-decoration: none;
+  font-size: 14px;
+}
+@media (max-width: 768px) {
   .title-row .title {
-    font-size: 20px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .title-row .actions {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
+    font-size: 16px;
   }
   .title-row .actions a {
-    padding: 4px 8px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    text-decoration: none;
-    font-size: 14px;
-  }
-  @media (max-width: 768px) {
-    .title-row .title { font-size: 16px; }
-    .title-row .actions a { font-size: 12px; padding: 3px 6px; }
-  }
-
-  @font-face {
-    font-family: 'GmarketSansLight';
-    src: url('assets/fonts/GmarketSansTTFLight.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-  }
-  body, .title, .actions a, .btn {
-    font-family: 'GmarketSansLight', system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", Arial, sans-serif !important;
-  }
-
-  /* 가사·더보기 버튼 - 연보라 포인트 */
-  .actions a {
-    padding: 6px 10px;
-    border-radius: 8px;
-    background-color: #9d7fe8;
-    color: #fff;
-    border: none;
-    font-size: 14px;
-    text-decoration: none;
-    transition: background-color 0.2s ease;
-  }
-  .actions a:hover { background-color: #8667d1; }
-
-  /* 목록으로 버튼 - 회색 중립 */
-  .btn-back {
-    padding: 6px 10px;
-    border-radius: 8px;
-    background-color: #f5f5f5;
-    color: #333;
-    border: 1px solid #ccc;
-    font-size: 14px;
-    text-decoration: none;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-  }
-  .btn-back:hover { background-color: #e0e0e0; border-color: #999; }
-
-  /* header tightening */
-  #hdrTitle{ flex:1 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:clamp(14px, 4vw, 20px); }
-  header .actions{ display:flex; gap:6px; flex-wrap:nowrap; flex:0 0 auto; }
-  header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw, 6px) clamp(6px, 1.2vw, 10px); }
-
-  .menu-card{ display:none !important; }
-
-  /* 가사/더보기 iframe 여백 추가하여 스크롤바 잘림 방지 */
-  .content-iframe { box-sizing: border-box; padding-right: 0; }
-
-  /* 모바일 여백/간격 보정 */
-  
-  @media (max-width:900px){
-    .left-col > .card + .card{ margin-top:12px; }
-  }
-
-
-/* === Robust mobile spacing patch (explicit margins) === */
-@media (max-width:900px){
-  /* Stack panels without relying on flex-gap */
-  .pc-grid{ display:block !important; }
-   /* gap between left stack and right panel */
-  .content.card{ height:auto !important; }    /* prevent overflow eating bottom padding */
-  .page{ padding-bottom:16px !important; }    /* bottom breathing room */
-}
-
-
-/* === Mobile exact spacing spec (<=900px) === */
-@media (max-width:900px){
-  /* Layout: column with controlled heights */
-  .pc-grid{ display:flex !important; flex-direction:column !important; gap:0 !important; flex:1 1 auto; min-height:0; }
-  .player{ flex:0 0 auto !important; }                 /* YouTube panel fixed-height (by aspect-ratio) */
-  .left-col{ margin-bottom:10px !important; }          /* Exact 12px gap between YT and lyrics panel */
-  .content.card{ flex:1 1 auto !important; min-height:0 !important; margin:0 !important; }
-  .content-body{ padding:0 !important; height:100% !important; overflow:auto !important; -webkit-overflow-scrolling:touch; }
-  .content-iframe{ height:100% !important; }
-
-  /* Bottom breathing room so last panel never kisses the edge */
-  .page{ padding-bottom:16px !important; }
-}
-
-
-/* === Viewport-locked layout: header + one-screen page === */
-html, body { height: 100%; }
-body{
-  margin:0;
-  height:100vh;                         /* lock to viewport */
-  display:grid;                         /* 2 rows: header + page */
-  grid-template-rows:auto 1fr;
-  overflow:hidden;                      /* no page scroll */
-}
-
-/* page occupies the 1fr slot; no page scroll */
-.page{
-  max-width:var(--maxw);
-  margin:0 auto;
-  height:auto;
-  min-height:0;                         /* stop height propagation */
-  overflow:hidden;                      /* keep all scroll inside content-body */
-  width:100%;
-  padding: 0 12px 0;                    /* side padding only; bottom padding moves inside content-body */
-}
-
-/* Desktop (>=901px): two-column grid; internal scroll only */
-@media (min-width:901px){
-  .pc-grid{
-    display:grid;
-    gap:var(--gap);
-    grid-template-columns: var(--left) var(--right);
-    height:100%;
-    min-height:0;
-  }
-  .left-col{
-    display:grid;
-    gap:var(--gap);
-    grid-template-rows:auto auto;
-    min-height:0;
-  }
-  .content.card{
-    display:flex; flex-direction:column;
-    height:100%; min-height:0; overflow:hidden;
-  }
-  .content-body{
-    flex:1 1 auto; min-height:0; height:100%;
-    overflow:auto; -webkit-overflow-scrolling:touch;
-    padding: 0 0 16px;                  /* bottom breathing room lives INSIDE */
+    font-size: 12px;
+    padding: 3px 6px;
   }
 }
 
-/* Mobile (<=900px): vertical stack; 12px gap; internal scroll only */
-@media (max-width:900px){
-  .pc-grid{
-    display:flex; flex-direction:column;
-    gap:0; flex:1 1 auto; min-height:0; height:100%;
-  }
-  .player{ flex:0 0 auto; }
-  .left-col{ margin-bottom:10px; }      /* exact 12px between YT and lyrics */
-  .content.card{ flex:1 1 auto; min-height:0; margin:0; overflow:hidden; }
-  .content-body{
-    height:100%; min-height:0;
-    overflow:auto; -webkit-overflow-scrolling:touch;
-    padding: 0 0 16px;                  /* bottom 16px lives INSIDE */
-  }
-  .content-iframe{ height:100%; }
+
+@font-face {
+  font-family: 'GmarketSansLight';
+  src: url('assets/fonts/GmarketSansTTFLight.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+body, .title, .actions a, .btn {
+  font-family: 'GmarketSansLight', system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", Arial, sans-serif !important;
+}
+
+/* 가사·더보기 버튼 - 연보라 포인트 */
+.actions a {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background-color: #9d7fe8;
+  color: #fff;
+  border: none;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+.actions a:hover {
+  background-color: #8667d1;
+}
+
+/* 목록으로 버튼 - 회색 중립 */
+.btn-back {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.btn-back:hover {
+  background-color: #e0e0e0;
+  border-color: #999;
+}
+
+
+/* header tightening */
+#hdrTitle{ flex:1 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:clamp(14px, 4vw, 20px); }
+header .actions{ display:flex; gap:6px; flex-wrap:nowrap; flex:0 0 auto; }
+header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw, 6px) clamp(6px, 1.2vw, 10px); }
+
+.menu-card{ display:none !important; }
+
+/* 가사/더보기 iframe 여백 추가하여 스크롤바 잘림 방지 */
+.content-iframe {
+  box-sizing: border-box;
+  padding-right: 0;
+}
+
+
+@media (max-width: 768px) {
+  .content-iframe {  }
+}
+
+
+@media (max-width: 768px) {
+  /* Title: YouTube: Gasa 1:4:5 ratio */
+  .title { flex: 1 1 10%; }
+  .content-iframe { flex: 4 1 50%; }
+  .gasa { flex: 5 1 40%; }
+}
+
+
+.btn-back, .actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content.card {
+  margin-bottom: 12px;
 }
 </style>
 <!-- TRACKS 로더 -->
@@ -314,34 +230,7 @@ body{
     loadNext();
   })();
 </script>
-<style id="final-overrides">
-/* === FINAL OVERRIDES (cache/precedence guard) === */
-@media (max-width:900px){
-  .left-col{ margin-bottom:10px !important; }             /* 10px gap */
-  .content-body{ padding-bottom:16px !important; }        /* bottom room */
-  .pc-grid{ flex-direction:column !important; gap:0 !important; min-height:0 !important; }
-  .content.card{ flex:1 1 auto !important; min-height:0 !important; overflow:hidden !important; }
-}
-html, body{ height:100% !important; }
-body{ height:100vh !important; overflow:hidden !important; display:grid !important; grid-template-rows:auto 1fr !important; }
-.page{ height:auto !important; min-height:0 !important; overflow:hidden !important; padding:0 12px 0 !important; }
-</style><style id="gap10-clean-final">
-@media (max-width:900px){
-  .left-col{ margin-bottom:10px !important; }
-}
-</style><style id="gap10-final-override">
-/* === FINAL GAP-BASED OVERRIDE (mobile) === */
-@media (max-width:900px){
-  .pc-grid{
-    display:flex !important;
-    flex-direction:column !important;
-    gap:10px !important;              /* authoritative 10px between panels */
-    min-height:0 !important;
-  }
-  .left-col{ margin-bottom:0 !important; }  /* remove legacy margin spacing */
-  .content.card{ margin:0 !important; }     /* normalize */
-}
-</style></head>
+</head>
 <body>
 <header>
 <a class="btn-back" href="./index.html">🏠</a>
@@ -405,7 +294,8 @@ body{ height:100vh !important; overflow:hidden !important; display:grid !importa
   function toHtml(title, body){
     return `<!doctype html><html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <style>
-  html,body{height:100%} body{margin:0;padding:14px 14px 18px;background:#181818;color:#fff;font-family:system-ui,"Noto Sans KR",sans-serif;line-height:1.55;font-size:16px;overflow:auto;-webkit-overflow-scrolling:touch}
+  html,body{height:100%} body{margin:0;padding:14px 14px 18px;background:#181818;color:#fff;
+  } @media (min-width:901px){ body{ padding:22px 22px 26px; } } body{font-family:system-ui,"Noto Sans KR",sans-serif;line-height:1.55;font-size:16px;overflow:auto;-webkit-overflow-scrolling:touch}
   h1{font-size:18px;margin:0 0 10px 0}
   .mono{white-space:pre-wrap;word-break:keep-all}
 
@@ -482,5 +372,6 @@ body{ height:100vh !important; overflow:hidden !important; display:grid !importa
     try { initDetail(); } catch(e){ console.error("initDetail error", e); } 
   });
 })();
-</script></body>
+</script>
+</body>
 </html>
