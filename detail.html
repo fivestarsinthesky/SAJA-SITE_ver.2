@@ -268,6 +268,29 @@
   }
 }
 
+
+/* === BG SPLIT: 모바일 cover 유지 / PC는 html 고정(100% 100%) === */
+/* 모바일: 기존 흐름 유지 (그리드 세로 늘어남 그대로) */
+@media (max-width:900px){
+  html{ background: none !important; }
+  body{
+    background: url('bg.png') no-repeat center center !important;
+    background-size: cover !important;               /* 비율 유지, 자연스러운 늘어남 */
+    min-height: 100svh !important;                   /* 모바일 주소창/노치 대응 */
+  }
+}
+
+/* PC: 화면 기준으로 항상 꽉 차게 (비율 무시 100% 100%) */
+@media (min-width:901px){
+  html{
+    background: url('bg.png') no-repeat center center fixed !important;
+    background-size: 100% 100% !important;           /* 가로·세로 꽉 채움 */
+  }
+  /* 본문/오버레이가 배경을 가리지 않도록 투명 처리 */
+  body{ background: transparent !important; }
+  body::before{ background: transparent !important; }
+}
+
 </style>
 <!-- TRACKS 로더 -->
 <script>
