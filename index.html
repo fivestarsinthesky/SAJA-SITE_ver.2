@@ -42,7 +42,7 @@
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     font-weight:700;
     line-height:1.1;
-    font-size:14px;
+    font-size: 10px;
   }
 
   /* 단계적 반응형 */
@@ -193,17 +193,36 @@
 
 .page-footer {
   position: fixed;
+  left: 0;
   bottom: 10px;
   width: 100%;
+  box-sizing: border-box;
+  padding: 0 12px;
   text-align: center;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.7); /* 70% 투명도 */
+  font-size: clamp(8px, 2.5vw, 10px);  /* desktop: shrink if needed, max 10px */
+  color: rgba(255, 255, 255, 0.7);
   z-index: 9999;
+  white-space: nowrap;   /* keep one line */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* 모바일에서는 문단 분리 */
+/* Mobile: in-flow under grid, two lines, occupies space */
 @media (max-width: 900px) {
+  .page-footer {
+    position: static;             /* in flow under grid */
+    width: 100%;
+    padding: 0 16px;
+    margin: 16px auto 12px;
+    font-size: clamp(8px, 3.2vw, 10px);  /* mobile: shrink more aggressively, max 10px */
+    white-space: normal;          /* allow wrapping */
+    overflow: visible;
+    text-overflow: clip;
+  }
   .page-footer span { display: block; }
+}
+  .page-footer span { display: block; }  /* split into two lines */
+}
 }
 
 </style>
@@ -224,6 +243,10 @@
       <a aria-label="Naver Cafe" href="https://cafe.naver.com/" rel="noopener" target="_blank"><img alt="Naver Cafe" src="./assets/icons/SNS03.png?v=20250812162819c"/></a>
     </nav>
     <div class="grid" id="grid"></div>
+  <div class="page-footer">
+  <span>팬 콘텐츠 · © 2025. 눈물많은 T상자. · 모든 저작물의 권리는 원저작자인 사자왕자에게 있습니다.</span>
+  <span>Fan-made · © 2025. 눈물많은 T상자. · All original content belongs to lionprince.x.</span>
+</div>
   </main>
 
   <!-- 타이틀 높이에 맞춰 본문 밀기 -->
@@ -313,9 +336,6 @@
   })();
   </script>
 
-<div class="page-footer">
-  <span>팬 콘텐츠 · © 2025. 눈물많은 T상자. · 모든 저작물의 권리는 원저작자인 사자왕자에게 있습니다.</span>
-  <span>Fan-made · © 2025. 눈물많은 T상자. · All original content belongs to lionprince.x.</span>
-</div>
+
 </body>
 </html>
