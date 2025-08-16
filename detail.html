@@ -219,8 +219,14 @@
 /* === PC exact spacing spec (>=901px) === */
 @media (min-width:901px){
   .page{
-    padding: 0 0 16px 0 !important; /* bottom only 16px */
+    padding: 0 0 16px 0 !important; /* 하단만 16px */
   }
+}
+
+
+/* === Desktop right-side visible gap (inside grid) === */
+@media (min-width:901px){
+  .pc-grid{ padding-right:16px; box-sizing:border-box; }
 }
 
 
@@ -232,10 +238,34 @@
 .content-body::-webkit-scrollbar-button { display:none; width:0; height:0; background:transparent; }
 .content-body:hover::-webkit-scrollbar-thumb { background: #ffffff; border-color: transparent; }
 
-/* === Desktop right-side outer gap using margin === */
-@media (min-width:901px){
-  .pc-grid{ margin-right:16px; }
+
+/* === Wrapper-based hover-reveal scrollbar (Windows-safe) === */
+/* Make content-body a clipping shell */
+.content-body{ overflow: hidden !important; }
+
+/* Real scroll container */
+.scroller{
+  height: 100%;
+  overflow: auto;
+  /* hide native gutter by shifting it outside and clipping with parent */
+  margin-right: -16px;
+  padding-right: 16px;
+  box-sizing: border-box;
 }
+
+/* Reveal scrollbar on hover */
+.content-body:hover .scroller{ margin-right: 0; }
+
+/* Native scrollbar styling */
+.scroller{ scrollbar-width: thin; scrollbar-color: transparent transparent; scrollbar-gutter: stable; }
+.scroller::-webkit-scrollbar{ width: 10px; height: 10px; }
+.scroller::-webkit-scrollbar-track{ background: transparent; }
+.scroller::-webkit-scrollbar-thumb{ background: transparent; border-radius: 8px; border: 2px solid transparent; }
+.scroller::-webkit-scrollbar-button{ display: none; width: 0; height: 0; background: transparent; }
+
+/* On hover, make the thumb visible white */
+.content-body:hover .scroller::-webkit-scrollbar-thumb{ background: #ffffff; border-color: transparent; }
+
 </style>
 <!-- TRACKS 로더 -->
 <script>
@@ -319,7 +349,7 @@ body{
 <div class="content-meta" id="cMeta"></div>
 </div>
 <div class="content-body">
-<iframe class="content-iframe" id="panelFrame" title="가사/더보기"></iframe>
+<div class="scroller"><iframe class="content-iframe" id="panelFrame" title="가사/더보기"></iframe></div>
 </div>
 </div>
 </div>
@@ -378,26 +408,6 @@ body{
   /* Hover anywhere in iframe -> white thumb (Chromium/WebKit), white color (Firefox) */
   body:hover::-webkit-scrollbar-thumb { background: #ffffff; border-color: transparent; }
   body:hover { scrollbar-color: #ffffff transparent; }
-  html, body { scrollbar-gutter: stable; }
-
-
-  /* === IFRAME SCROLLBAR CUSTOM (idle transparent / hover white / no buttons) === */
-  /* Firefox default transparent */
-  body { scrollbar-width: thin; scrollbar-color: transparent transparent; }
-  /* Chromium/WebKit */
-  body::-webkit-scrollbar { width: 10px; height: 10px; }
-  body::-webkit-scrollbar-track { background: transparent; }
-  body::-webkit-scrollbar-thumb {
-    background: transparent;
-    border-radius: 8px;
-    border: 2px solid transparent;
-  }
-  /* Remove up/down arrow buttons */
-  body::-webkit-scrollbar-button { display: none; width: 0; height: 0; background: transparent; }
-  /* Hover shows white */
-  body:hover { scrollbar-color: #ffffff transparent; }     /* Firefox */
-  body:hover::-webkit-scrollbar-thumb { background: #ffffff; border-color: transparent; } /* Chromium/WebKit */
-  /* Layout stability */
   html, body { scrollbar-gutter: stable; }
 
 </style></head><body>
