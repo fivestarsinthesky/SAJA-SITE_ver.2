@@ -238,28 +238,53 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
     padding: 16px !important;
   }
 }
-</style><style id="mobile-gap-viewport-final">
-/* === FINAL: viewport lock + mobile gap=10 (minimal) === */
-/* 1) 문서를 ‘보이는’ 뷰포트에 딱 고정 + 본문 1fr */
+</style><style id="final-guard-patch">
+/* === FINAL GUARD: viewport lock + PC gutters + mobile no-overlap/gap10 === */
+
+/* Viewport lock: one screen only, internal scroll for content */
 body{
   height:100vh; overflow:hidden;
   display:grid; grid-template-rows:auto 1fr;
 }
-@supports (height:100svh){ body{ height:100svh; } }
-@supports (height:100dvh){ body{ height:100dvh; } }
+@supports (height: 100svh){ body{ height:100svh; } }
+@supports (height: 100dvh){ body{ height:100dvh; } }
 
+/* Height propagation fix across the layout chain */
 .page, .pc-grid, .content.card, .content-body{ min-height:0 !important; }
-.content.card{ display:flex; flex-direction:column; }
-.content-body{
-  flex:1 1 auto; overflow:auto !important;
-  -webkit-overflow-scrolling:touch;
-  box-sizing:border-box; padding:0 0 16px;
+
+/* Desktop (≥901px): keep gutters & 2-col grid */
+@media (min-width:901px){
+  .page{ max-width: var(--maxw); margin: 0 auto; padding:16px; }
+  .pc-grid{ display:grid; grid-template-columns: var(--left) var(--right); gap: var(--gap); height:100%; }
 }
 
-/* 2) 모바일 간격의 주인은 부모 gap 하나(10px) */
+/* Mobile (≤900px): stack, no overlap, single source of spacing = gap:10px */
 @media (max-width:900px){
-  .pc-grid{ display:flex !important; flex-direction:column !important; gap:10px !important; }
-  .pc-grid > *{ margin:0 !important; }
+  html body .page .pc-grid{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:10px !important;
+    min-height:0 !important;
+  }
+  html body .page .pc-grid > *{ margin:0 !important; }
+
+  /* Player reserves height; no absolute overlay */
+  html body .page .player{ position:relative !important; aspect-ratio:16/9 !important; height:auto !important; }
+  html body .page .player::before{ content:none !important; }
+  html body .page .player iframe{
+    position:static !important; display:block !important; width:100% !important; height:100% !important;
+  }
+
+  /* Lyrics panel scrolls internally; bottom padding visible */
+  html body .page .content.card{
+    display:flex !important; flex-direction:column !important; overflow:hidden !important; min-height:0 !important;
+  }
+  html body .page .content-body{
+    flex:1 1 auto !important; min-height:0 !important;
+    overflow:auto !important; -webkit-overflow-scrolling:touch;
+    box-sizing:border-box !important;
+    padding:0 0 max(16px, env(safe-area-inset-bottom)) !important;
+  }
 }
 </style></head>
 <body>
