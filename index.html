@@ -261,108 +261,35 @@
   </main>
 
   <!-- 타이틀 높이에 맞춰 본문 밀기 -->
-  <script>
-  (function(){
-    function setHero(){
-      var t = document.querySelector('.title-fixed');
-      if(!t) return;
-      var h = t.getBoundingClientRect().height || 0;
-      document.documentElement.style.setProperty('--hero', (h) + 'px');
-    }
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      setTimeout(setHero, 0);
-    } else {
-      document.addEventListener('DOMContentLoaded', setHero);
-    }
-    var imgs = document.querySelectorAll('.title-fixed img');
-    imgs.forEach(function(img){ img.addEventListener('load', setHero, { once:false }); });
-    var tid;
-    window.addEventListener('resize', function(){
-      clearTimeout(tid);
-      tid = setTimeout(setHero, 100);
-    });
-  })();
-  </script>
-
-  <!-- 데이터 로드 -->
-  <script src="./assets/data/tracks.js?v=cache"></script>
-
   
-  <!-- 그리드 렌더 -->
-  <script>
-  (function () {
-    const grid = document.getElementById('grid');
-    if (!grid) return;
-    try {
-      const data = (window.TRACKS && Array.isArray(window.TRACKS)) ? window.TRACKS : [];
-      if (!data.length) {
-        console.error('TRACKS 비어있음 또는 로드 실패');
-        grid.innerHTML = '<div style="padding:24px;font-weight:700;">데이터가 없습니다. assets/data/tracks.js를 확인하세요.</div>';
-        return;
-      }
-      const frag = document.createDocumentFragment();
-      data.forEach(item => {
-        const a = document.createElement('a');
-        a.className = 'tile';
-        if (item.ratio) a.style.setProperty('--tile-ratio', item.ratio);
-        a.href = './detail.html?id=' + encodeURIComponent(item.id);
-        a.innerHTML = `
-          <img loading="lazy" src="${item.thumb}" alt="${item.artist} - ${item.title}">
-          <div class="label"><span>${item.artist} - ${item.title}</span></div>
-        `;
-        frag.appendChild(a);
-      });
-      grid.innerHTML = '';
-      grid.appendChild(frag);
-    } catch (e) {
-      console.error(e);
-      grid.innerHTML = '<div style="padding:24px;font-weight:700;">스크립트 오류가 발생했습니다. 콘솔을 확인하세요.</div>';
-    }
-  })();
-  </script>
-
-
 <script>
 (function(){
   function setupMarquees(){
-    const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
     const tiles = document.querySelectorAll('.tile');
+    const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
     tiles.forEach(tile => {
       const label = tile.querySelector('.label');
       const span  = label && label.querySelector('span');
       if(!label || !span) return;
-
-      // 초기화
+      // 초기화: 무조건 왼쪽에서 보이기
+      span.style.animation = 'none';
       span.style.transform = 'translateX(0)';
+      span.style.paddingLeft = '0px';
+      span.style.marginLeft  = '0px';
       label.classList.remove('is-scroll');
-
-      // 오버플로우 계산 (흘려보낼 거리)
       const overflow = Math.max(0, Math.ceil(span.scrollWidth - label.clientWidth));
       label.style.setProperty('--scrollW', overflow + 'px');
-
-      // 거리 비례 시간 (px/초 ≈ 40), 6~16초 범위
       const seconds = Math.min(16, Math.max(6, overflow / 40 + 6));
       label.style.setProperty('--dur', seconds + 's');
-
-      if(canHover){
-        // 실수 호버 방지를 위한 약간의 딜레이
+      if (canHover){
         let tid = null;
-        const onEnter = () => {
-          if(overflow > 0){
-            tid = setTimeout(()=>label.classList.add('is-scroll'), 120);
-          }
-        };
-        const onLeave = () => {
-          clearTimeout(tid);
-          label.classList.remove('is-scroll');
-          span.style.transform = 'translateX(0)';
-        };
+        const onEnter = () => { if (overflow > 0) tid = setTimeout(()=>label.classList.add('is-scroll'), 120); };
+        const onLeave = () => { clearTimeout(tid); label.classList.remove('is-scroll'); span.style.transform='translateX(0)'; };
         tile.addEventListener('mouseenter', onEnter);
         tile.addEventListener('mouseleave', onLeave);
       }
     });
   }
-  // 렌더/리사이즈 후 재측정
   let rid;
   window.addEventListener('resize', ()=>{ clearTimeout(rid); rid = setTimeout(setupMarquees, 150); });
   window.addEventListener('load', setupMarquees, {once:true});
@@ -370,6 +297,7 @@
   setTimeout(setupMarquees, 600);
 })();
 </script>
+
 
 </body>
 </html>
