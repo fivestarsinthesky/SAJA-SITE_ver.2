@@ -70,13 +70,7 @@
     }
 
     /* 패널: 세로 스택 + 간격 16px */
-    .pc-grid{
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      flex:1 1 auto;
-      min-height:0;
-    }
+    
     
 
     /* 유튜브는 고정, 오른쪽 패널은 남은 높이 */
@@ -196,7 +190,7 @@
 @media (max-width:900px){
   /* Stack panels without relying on flex-gap */
   .pc-grid{ display:block !important; }
-  .left-col{ margin-bottom:16px !important; } /* gap between left stack and right panel */
+   /* gap between left stack and right panel */
   .content.card{ height:auto !important; }    /* prevent overflow eating bottom padding */
   .page{ padding-bottom:16px !important; }    /* bottom breathing room */
 }
@@ -205,9 +199,9 @@
 /* === Mobile exact spacing spec (<=900px) === */
 @media (max-width:900px){
   /* Layout: column with controlled heights */
-  .pc-grid{ display:flex !important; flex-direction:column !important; gap:0 !important; flex:1 1 auto; min-height:0; }
+  .pc-grid{ display:flex !important; flex-direction:column !important; flex:1 1 auto; min-height:0; }
   .player{ flex:0 0 auto !important; }                 /* YouTube panel fixed-height (by aspect-ratio) */
-  .left-col{ margin-bottom:12px !important; }          /* Exact 12px gap between YT and lyrics panel */
+            /* Exact 12px gap between YT and lyrics panel */
   .content.card{ flex:1 1 auto !important; min-height:0 !important; margin:0 !important; }
   .content-body{ padding:0 !important; height:100% !important; overflow:auto !important; -webkit-overflow-scrolling:touch; }
   .content-iframe{ height:100% !important; }
