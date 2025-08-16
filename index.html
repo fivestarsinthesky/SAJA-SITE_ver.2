@@ -226,6 +226,35 @@
 }
 
 </style>
+
+<style>
+
+/* === Mobile: title & SNS follow the page flow (no fixed) === */
+@media (max-width: 900px){
+  /* 타이틀바를 고정 해제: 문서 흐름에 넣기 */
+  .title-fixed{
+    position: static !important;
+    width: 100% !important;
+    z-index: auto !important;
+    pointer-events: auto !important; /* 이미지 클릭 유지 */
+  }
+
+  /* 타이틀 높이에 맞춰 본문을 밀던 값 제거 (이제 고정이 아님) */
+  .wrap{
+    padding-top: 16px !important;   /* 자연스러운 상단 간격만 유지 */
+  }
+
+  /* SNS 그리드도 고정 해제 + 자연스러운 간격 */
+  .sns-grid{
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    z-index: auto !important;
+    margin: 8px 0 12px !important;   /* 타이틀 바로 아래 붙게 */
+  }
+}
+
+</style>
 </head>
 <body>
   <div class="title-fixed">
