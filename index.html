@@ -159,19 +159,23 @@
   </script>
 
 
+
 <script>
 (function(){
   function setupMarquees(){
-    const labels = document.querySelectorAll('.label');
+    const tiles = document.querySelectorAll('.tile');
     const hasHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
-    labels.forEach(label => {
-      const span = label.querySelector('span');
-      if(!span) return;
-      // Reset any previous values
+
+    tiles.forEach(tile => {
+      const label = tile.querySelector('.label');
+      const span  = tile.querySelector('.label > span');
+      if(!label || !span) return;
+
+      // Reset before measuring
       span.style.transform = 'translateX(0)';
       label.classList.remove('is-scroll');
 
-      // Measure overflow
+      // Measure overflow relative to label box
       const overflow = Math.max(0, span.scrollWidth - label.clientWidth);
       label.style.setProperty('--scrollW', overflow + 'px');
 
@@ -180,17 +184,21 @@
       label.style.setProperty('--dur', seconds + 's');
 
       if(hasHover){
-        // Scroll once on hover
-        label.addEventListener('mouseenter', () => {
+        // Hover on the whole tile triggers the label scroll once
+        const onEnter = () => {
           if(overflow > 0){
             label.classList.add('is-scroll');
           }
-        });
-        label.addEventListener('mouseleave', () => {
-          // reset to start
+        };
+        const onLeave = () => {
           label.classList.remove('is-scroll');
           span.style.transform = 'translateX(0)';
-        });
+        };
+        // Remove prior listeners to avoid stacking
+        tile.removeEventListener('mouseenter', onEnter);
+        tile.removeEventListener('mouseleave', onLeave);
+        tile.addEventListener('mouseenter', onEnter);
+        tile.addEventListener('mouseleave', onLeave);
       }
     });
   }
@@ -201,13 +209,12 @@
     clearTimeout(tid);
     tid = setTimeout(setupMarquees, 150);
   });
-  // Also run on fonts/images load changes
   window.addEventListener('load', setupMarquees, {once:true});
-  // In case grid renders dynamically after TRACKS load, try again shortly
   setTimeout(setupMarquees, 150);
   setTimeout(setupMarquees, 600);
 })();
 </script>
+
 
 </body>
 </html>
