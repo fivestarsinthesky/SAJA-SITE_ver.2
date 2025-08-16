@@ -291,6 +291,18 @@
   body::before{ background: transparent !important; }
 }
 
+
+.page-footer {
+  position: fixed;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.3); /* 30% 불투명도 */
+  pointer-events: none;
+  white-space: nowrap;
+}
+
 </style>
 <!-- TRACKS 로더 -->
 <script>
@@ -451,6 +463,12 @@ h1{font-size:18px;margin:0 0 10px 0}
 </style></head><body>
   <h1>${title}</h1>
   <div class="mono">${body}</div>
+
+<div class="page-footer">
+  팬 콘텐츠 · © 2025. 눈물많은 T상자. · 모든 저작물의 권리는 원저작자인 사자왕자에게 있습니다.
+  Fan-made · © 2025. 눈물많은 T상자. · All original content belongs to lionprince.x.
+</div>
+
 </body></html>`;
   }
   function setPanel($iframe, html){
