@@ -245,9 +245,16 @@
 }
 
 
-/* === Mobile fix: remove extra bottom margin on last card === */
+/* === Mobile safe patch: exact 12px between left-col and content.card (scoped) === */
 @media (max-width:900px){
-  .page > .content.card:last-child { margin-bottom:0 !important; }
+  /* 0) Normalize container spacing inside pc-grid only */
+  .pc-grid{ display:flex !important; flex-direction:column !important; row-gap:0 !important; column-gap:0 !important; gap:0 !important; }
+
+  /* 1) Between-panels spacing source: ONLY here */
+  .pc-grid > .left-col{ margin:0 0 12px 0 !important; }
+
+  /* 2) Prevent any other margins from stacking inside the grid */
+  .pc-grid > .content.card{ margin:0 !important; }
 }
 
 </style>
