@@ -554,5 +554,67 @@ body{
   });
 })();
 </script>
+
+<style id="mobile-lyrics-height-fix">
+/* === FIX: 모바일에서 가사 패널 높이 협소 현상 보정 ===
+   원인: 이전 규칙(.content.card{ height:auto !important; })이 남아있어
+         뷰포트 고정 레이아웃(1fr) + 내부 flex 전개와 충돌 → 높이 축소
+   해결: 모바일에서 .pc-grid를 column flex로 확정하고, .content.card를 100% 높이로 확장
+         .content-body는 flex:1로 내부 스크롤 유지, iframe은 100% */
+@media (max-width:900px){
+  .pc-grid{ display:flex !important; flex-direction:column !important; gap:0 !important; height:100% !important; }
+  .content.card{
+    display:flex !important;
+    flex-direction:column !important;
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:100% !important; /* 핵심: flex 컨테이너 높이를 채움 */
+  }
+  .content-body{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    overflow:auto !important;
+    -webkit-overflow-scrolling:touch;
+    padding:0 0 max(16px, env(safe-area-inset-bottom)) !important;
+  }
+  .content-iframe{ height:100% !important; }
+}
+
+
+  
+/* === Mobile narrow width improvement: ensure dynamic viewport height & lyrics growth === */
+@media (max-width:900px){
+  html, body { height: 100%; }
+  /* Use dynamic viewport height when available to avoid URL-bar shrink */
+  .page, .pc-grid{
+    min-height: 100vh !important;
+  }
+}
+@supports (height: 100dvh){
+  @media (max-width:900px){
+    .page, .pc-grid{ min-height: 100dvh !important; }
+  }
+}
+
+/* Reduce vertical losses at very narrow widths */
+@media (max-width:480px){
+  /* 마지막 카드 하단 마진 제거, 바닥 여백은 padding으로 처리 */
+  .content.card{ margin-bottom: 0 !important; }
+  .content-body{ padding-bottom: max(16px, env(safe-area-inset-bottom)) !important; }
+}
+
+/* Make sure the lyrics region is the flex grower */
+@media (max-width:900px){
+  /* 상단(타이틀/플레이어) 영역은 auto, 가사는 남는 공간 모두 */
+  .pc-grid{ display:flex !important; flex-direction:column !important; }
+  .pc-grid > .card:first-child{ flex:0 0 auto !important; }   /* 제목/헤더 카드가 있다면 */
+  .pc-grid > .card.video{ flex:0 0 auto !important; }         /* 동영상 카드가 있다면 */
+  .pc-grid > .card.lyrics{ flex:1 1 auto !important; min-height:0 !important; }
+  /* 클래스명이 다를 수도 있으니 보강 */
+  .content.card.lyrics .content-body,
+  .content.card .content-body{ flex:1 1 auto !important; min-height:0 !important; overflow:auto !important; }
+}
+
+</style>
 </body>
 </html>
