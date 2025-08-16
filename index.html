@@ -104,7 +104,7 @@
 
   /* ------- SNS 작은 그리드 (상단 좌측 고정) ------- */
   :root{ --sns-size: 56px; }
-  @media (max-width: 640px){ :root{ --sns-size: 48px; } }
+  @media (max-width: 640px){ :root{ --sns-size: 40px; } }
 
   /* UPDATED: align SNS grid bottom with title bar bottom and subtract padding */
   .sns-grid{
@@ -185,6 +185,11 @@
   .lp-modal[id^="modal"] .lp-modal__body::-webkit-scrollbar-track{
     background: transparent;
   }
+
+  @media (max-width: 640px){
+    .wrap{ padding-top: calc(var(--hero) + 8px); } /* mobile: avoid overlap with fixed title */
+  }
+
 </style>
 </head>
 <body>
