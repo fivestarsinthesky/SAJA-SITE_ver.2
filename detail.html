@@ -244,6 +244,12 @@
   .pc-grid > .content.card{ grid-column: 3 !important; }
 }
 
+
+/* === Mobile fix: remove extra bottom margin on last card === */
+@media (max-width:900px){
+  .page > .content.card:last-child { margin-bottom:0 !important; }
+}
+
 </style>
 <!-- TRACKS 로더 -->
 <script>
