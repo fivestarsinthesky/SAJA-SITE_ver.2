@@ -268,35 +268,7 @@ body{
   box-sizing:border-box;
   padding:0 0 max(16px, env(safe-area-inset-bottom));
 }
-</style>
-<style id="title-ticker">
-/* === Title ticker (Mobile-only when overflow; auto when ellipsized) === */
-#hdrTitle.ticker{
-  position: relative;
-  overflow: hidden;
-  text-overflow: clip; /* 말줄임표 대신 흘러가기 */
-}
-#hdrTitle.ticker .ticker-track{
-  display: inline-flex;
-  align-items: center;
-  gap: 24px; /* 복제 텍스트 사이 간격 */
-  will-change: transform;
-  animation: title-ticker var(--ticker-duration, 12s) linear infinite;
-}
-#hdrTitle.ticker span{ white-space: nowrap; }
-
-@keyframes title-ticker{
-  from{ transform: translateX(0); }
-  to  { transform: translateX(calc(-1 * var(--ticker-step, 300px))); }
-}
-
-/* 접근성: '움직임 줄이기' 존중 */
-@media (prefers-reduced-motion: reduce){
-  #hdrTitle.ticker .ticker-track{ animation: none !important; transform: none !important; }
-}
-</style>
-
-</head>
+</style></head>
 <body>
 <header>
 <a class="btn-back" href="./index.html">🏠</a>
@@ -373,56 +345,20 @@ body{
   }
   body{font-family:'GmarketSansLight', system-ui, "Noto Sans KR", sans-serif;}
 </style>
-<style id="title-ticker">
-/* === Title ticker (Mobile-only when overflow; auto when ellipsized) === */
+
+<style id="ticker-css">
+/* === Header title ticker (모바일에서 말줄임일 때만; 폰트 크기 변경 없음) === */
 #hdrTitle.ticker{
   position: relative;
   overflow: hidden;
-  text-overflow: clip; /* 말줄임표 대신 흘러가기 */
+  white-space: nowrap;
 }
 #hdrTitle.ticker .ticker-track{
-  display: inline-flex;
-  align-items: center;
-  gap: 24px; /* 복제 텍스트 사이 간격 */
-  will-change: transform;
-  animation: title-ticker var(--ticker-duration, 12s) linear infinite;
-}
-#hdrTitle.ticker span{ white-space: nowrap; }
-
-@keyframes title-ticker{
-  from{ transform: translateX(0); }
-  to  { transform: translateX(calc(-1 * var(--ticker-step, 300px))); }
-}
-
-/* 접근성: '움직임 줄이기' 존중 */
-@media (prefers-reduced-motion: reduce){
-  #hdrTitle.ticker .ticker-track{ animation: none !important; transform: none !important; }
-}
-
-
-  /* === PC 전용 배경이미지: 세로 100vh 꽉 채우기 === */
-@media (min-width:901px){
-  body{
-    /* 필요 시 경로 수정: 'bg.png' 또는 'assets/img/bg.png' */
-    background: #000 url('assets/img/bg.png') center / cover no-repeat fixed;
-    /* cover: 화면 비율에 맞춰 잘 차도록 크롭, fixed: 스크롤해도 고정(원치 않으면 fixed 제거) */
-  }
-}
-
-
-  /* === Ticker width-clamp overrides (모바일에서 말줄임일 때만) === */
-.ticker{
-  position: relative;
-  overflow: hidden;          /* 내부 트랙이 밖으로 넘치지 않게 */
-  white-space: nowrap;
-}
-.ticker .ticker-track{
-  position: absolute;        /* 부모 폭에 영향 주지 않음 */
-  left: 0;
-  top: 0;
-  white-space: nowrap;
+  position: absolute;
+  left: 0; top: 0;
   display: inline-flex;
   gap: var(--ticker-gap, 24px);
+  white-space: nowrap;
   will-change: transform;
   animation: ticker-move var(--ticker-duration, 12s) linear infinite;
 }
@@ -430,10 +366,8 @@ body{
   from{ transform: translateX(0); }
   to  { transform: translateX(calc(-1 * var(--ticker-step, 300px))); }
 }
-
-/* 접근성: 모션 감소 환경에서 애니메이션 중지 */
 @media (prefers-reduced-motion: reduce){
-  .ticker .ticker-track{ animation: none; }
+  #hdrTitle.ticker .ticker-track{ animation: none; }
 }
 </style>
 
@@ -446,52 +380,6 @@ body{
     try{ $iframe.srcdoc = html; }catch(e){}
     try{ $iframe.src = "data:text/html;charset=utf-8," + encodeURIComponent(html); }catch(e){}
   }
-      function setupTicker(el){
-    if(!el) return;
-
-    // 기존 텍스트 보존 + 초기화
-    const original = el.getAttribute('data-title') || el.textContent.trim();
-    el.setAttribute('data-title', original);
-    el.classList.remove('ticker');
-    el.style.removeProperty('width'); // 잠금 폭 해제
-    el.innerHTML = original.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
-
-    // 모바일 전용
-    const isMobile = window.matchMedia('(max-width:900px)').matches;
-    if(!isMobile) return;
-
-    // overflow(말줄임) 아닐 때 종료
-    // clientWidth: 현재 표시폭(버튼 사이 여백 내)
-    // scrollWidth: 실제 텍스트폭
-    if(el.scrollWidth <= el.clientWidth) return;
-
-    // *** 핵심: "원래 차지하던 폭"을 잠금 ***
-    const lockWidth = el.clientWidth;  // 말줄임 기준 폭
-    el.style.width = lockWidth + 'px'; // 이 폭 안에서만 내부 트랙이 이동
-
-    // ticker DOM 구성 (내부 트랙은 절대배치로 부모 폭에 영향 X)
-    el.classList.add('ticker');
-    const safe = original.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
-    el.innerHTML = `<div class="ticker-track">
-      <span class="t1">${safe}</span><span class="t2">${safe}</span>
-    </div>`;
-
-    // 길이에 비례해 속도 자동 조절
-    requestAnimationFrame(()=>{
-      const first = el.querySelector('.t1');
-      // 트랙 이동 거리는 "첫 텍스트 폭 + gap"
-      const gap = 24;
-      const step = (first ? first.offsetWidth : el.scrollWidth) + gap;
-      const speed = Math.max(70, Math.min(120, window.innerWidth/10)); // px/s
-      const duration = Math.max(8, step / speed);
-      const track = el.querySelector('.ticker-track');
-      if(track){
-        track.style.setProperty('--ticker-step', step + 'px');
-        track.style.setProperty('--ticker-duration', duration + 's');
-        track.style.setProperty('--ticker-gap', gap + 'px');
-      }
-    });
-  }
 
   function initDetail(){
     const id = q('id');
@@ -500,11 +388,7 @@ body{
 
     // 헤더 제목/메타
     document.getElementById('hdrTitle').textContent = (data.artist&&data.title)? `${data.artist} — ${data.title}` : '상세';
-    const $hdr = document.getElementById('hdrTitle');
-    setupTicker($hdr);                       // 최초 1회
-    let __tm;                                // 리사이즈 디바운스
-    window.addEventListener('resize', ()=>{ clearTimeout(__tm); __tm = setTimeout(()=>setupTicker($hdr), 150); });
-
+    try{ setupTicker(document.getElementById('hdrTitle')); }catch(e){}
     document.getElementById('cMeta').textContent   = (data.artist&&data.title)? `${data.artist} · ${data.title}` : '';
 
     // 유튜브
@@ -552,69 +436,63 @@ body{
   document.addEventListener("tracks-ready", function(){ 
     try { initDetail(); } catch(e){ console.error("initDetail error", e); } 
   });
+
+  // Re-evaluate ticker on resize (debounced)
+  (function(){
+    let t;
+    window.addEventListener('resize', function(){
+      clearTimeout(t);
+      t = setTimeout(function(){ try{ setupTicker(document.getElementById('hdrTitle')); }catch(e){} }, 120);
+    }, { passive:true });
+  })();
+
 })();
+
+
+/* === Header title ticker logic === */
+function setupTicker(el){
+  if(!el) return;
+
+  // Restore original once to avoid double-wrapping
+  const original = el.getAttribute('data-title') || el.textContent.trim();
+  el.setAttribute('data-title', original);
+  el.classList.remove('ticker');
+  el.style.removeProperty('width'); // unlock width in case of previous lock
+  el.innerHTML = original.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+
+  // Mobile-only
+  const isMobile = window.matchMedia('(max-width:900px)').matches;
+  if(!isMobile) return;
+
+  // Only when ellipsized (would overflow)
+  // Force measurement after layout
+  if (el.scrollWidth <= el.clientWidth) return;
+
+  // Lock the current visible width so layout doesn't expand
+  const lockWidth = el.clientWidth;
+  el.style.width = lockWidth + 'px';
+
+  // Build ticker track with duplicated text
+  const safe = original.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+  el.classList.add('ticker');
+  el.innerHTML = '<div class="ticker-track"><span class="t1">'+safe+'</span><span class="t2">'+safe+'</span></div>';
+
+  // Compute step (one text width + gap), and duration ~ length/speed
+  requestAnimationFrame(()=>{
+    const first = el.querySelector('.t1');
+    const gap = 24;
+    const step = (first ? first.offsetWidth : el.scrollWidth) + gap;
+    const speed = Math.max(70, Math.min(120, window.innerWidth/10)); // px/s
+    const duration = Math.max(8, step / speed);
+    const track = el.querySelector('.ticker-track');
+    if(track){
+      track.style.setProperty('--ticker-step', step + 'px');
+      track.style.setProperty('--ticker-duration', duration + 's');
+      track.style.setProperty('--ticker-gap', gap + 'px');
+    }
+  });
+}
+
 </script>
-
-<style id="mobile-lyrics-height-fix">
-/* === FIX: 모바일에서 가사 패널 높이 협소 현상 보정 ===
-   원인: 이전 규칙(.content.card{ height:auto !important; })이 남아있어
-         뷰포트 고정 레이아웃(1fr) + 내부 flex 전개와 충돌 → 높이 축소
-   해결: 모바일에서 .pc-grid를 column flex로 확정하고, .content.card를 100% 높이로 확장
-         .content-body는 flex:1로 내부 스크롤 유지, iframe은 100% */
-@media (max-width:900px){
-  .pc-grid{ display:flex !important; flex-direction:column !important; gap:0 !important; height:100% !important; }
-  .content.card{
-    display:flex !important;
-    flex-direction:column !important;
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    height:100% !important; /* 핵심: flex 컨테이너 높이를 채움 */
-  }
-  .content-body{
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    overflow:auto !important;
-    -webkit-overflow-scrolling:touch;
-    padding:0 0 max(16px, env(safe-area-inset-bottom)) !important;
-  }
-  .content-iframe{ height:100% !important; }
-}
-
-
-  
-/* === Mobile narrow width improvement: ensure dynamic viewport height & lyrics growth === */
-@media (max-width:900px){
-  html, body { height: 100%; }
-  /* Use dynamic viewport height when available to avoid URL-bar shrink */
-  .page, .pc-grid{
-    min-height: 100vh !important;
-  }
-}
-@supports (height: 100dvh){
-  @media (max-width:900px){
-    .page, .pc-grid{ min-height: 100dvh !important; }
-  }
-}
-
-/* Reduce vertical losses at very narrow widths */
-@media (max-width:480px){
-  /* 마지막 카드 하단 마진 제거, 바닥 여백은 padding으로 처리 */
-  .content.card{ margin-bottom: 0 !important; }
-  .content-body{ padding-bottom: max(16px, env(safe-area-inset-bottom)) !important; }
-}
-
-/* Make sure the lyrics region is the flex grower */
-@media (max-width:900px){
-  /* 상단(타이틀/플레이어) 영역은 auto, 가사는 남는 공간 모두 */
-  .pc-grid{ display:flex !important; flex-direction:column !important; }
-  .pc-grid > .card:first-child{ flex:0 0 auto !important; }   /* 제목/헤더 카드가 있다면 */
-  .pc-grid > .card.video{ flex:0 0 auto !important; }         /* 동영상 카드가 있다면 */
-  .pc-grid > .card.lyrics{ flex:1 1 auto !important; min-height:0 !important; }
-  /* 클래스명이 다를 수도 있으니 보강 */
-  .content.card.lyrics .content-body,
-  .content.card .content-body{ flex:1 1 auto !important; min-height:0 !important; overflow:auto !important; }
-}
-
-</style>
 </body>
 </html>
