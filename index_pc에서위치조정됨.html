@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>사자왕자의 노래방 | 포스터 그리드</title>
+<style>
+  :root { --gap: 8px; --tile-ratio: 56.25%; --maxw: 1600px; --hero: clamp(46px, 10.6vw, 173px); }
+
+  /* ====== Title Bar sizing variables ====== */
+  :root{
+    --tb-sidePad: clamp(12px, 3vw, 24px);
+    --tb-vertPad: clamp(8px,  2vw, 16px);
+    --tb-gap:     clamp(8px,  2vw, 16px);
+    --tb-centerW: clamp(180px, 42vw, 520px);
+    --tb-rightW:  clamp(80px,  18vw, 240px);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin:0;
+    font-family: system-ui, "Noto Sans KR", sans-serif;
+    background: #fff url('./assets/bg.png?v=20250812162819') no-repeat center center fixed; background-size: 100% 100%;
+    color:#111;
+    min-height: 100vh;
+  }
+  /* UPDATED: make grid stick right under the title */
+  .wrap { max-width: var(--maxw); margin:0 auto; padding:24px 24px 28px; padding-top: var(--hero); }
+
+  /* 기본 10열 */
+  .grid { display:grid; grid-template-columns:repeat(10,1fr); gap:var(--gap); }
+  .tile { position:relative; overflow:hidden; border-radius:12px; border: none; background:#f7f7f7; }
+  .tile::before { content:""; display:block; padding-top: var(--tile-ratio); }
+  .tile img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .2s; }
+  .tile:hover img{ transform:scale(1.03); }
+
+  /* 라벨: 한 줄 유지 + 가독성 */
+  .label{
+    position:absolute; left:0; right:0; bottom:0;
+    padding:6px 8px;
+    color:#fff; background:linear-gradient(to top, rgba(0,0,0,.65), rgba(0,0,0,0));
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    font-weight:700;
+    line-height:1.1;
+    font-size:14px;
+  }
+
+  /* 단계적 반응형 */
+  @media (max-width:1400px){ .grid{ grid-template-columns:repeat(8,1fr); } }
+  @media (max-width:1200px){ .grid{ grid-template-columns:repeat(6,1fr); } }
+  @media (max-width:900px){  .grid{ grid-template-columns:repeat(4,1fr); } .wrap{ padding:16px 20px 24px; } }
+  @media (max-width:640px){  .grid{ grid-template-columns:repeat(2,1fr); } }
+
+  /* 오버레이 */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background: rgba(255,255,255,.05);
+    pointer-events:none;
+  }
+
+  /* ===== 상단 고정 타이틀 바: 중앙/오른쪽 이미지 ===== */
+  .title-fixed{
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    z-index: 1000;
+    pointer-events: none; /* 내부 요소만 클릭 가능 */
+  }
+  .title-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:var(--tb-gap);
+    padding:var(--tb-vertPad) var(--tb-sidePad);
+    width:100%;
+    box-sizing:border-box;
+  }
+  .title-center,
+  .title-right{
+    display:block;
+    height:auto;
+    width:100%;
+    max-width:none;
+    pointer-events:auto; /* 이미지 클릭 허용 */
+  }
+  .title-ghost{ /* 왼쪽 균형용 투명 스페이서 */
+    width:var(--tb-rightW);
+    height:1px;
+    opacity:0;
+  }
+  .title-center{ width:var(--tb-centerW); }
+  .title-right { width:var(--tb-rightW); object-fit:contain; margin-right:30px; }
+
+  @media (max-width: 380px){
+    :root{
+      --tb-centerW: clamp(160px, 50vw, 520px);
+      --tb-rightW:  clamp(64px,  16vw, 240px);
+    }
+  }
+
+  /* 타이틀 높이만큼 본문을 아래로 밀기: JS가 --hero에 실제 높이 주입 */
+  /* (moved up: now just var(--hero)) */
+
+  /* ------- SNS 작은 그리드 (상단 좌측 고정) ------- */
+  :root{ --sns-size: 56px; }
+  @media (max-width: 640px){ :root{ --sns-size: 48px; } }
+
+  /* UPDATED: align SNS grid bottom with title bar bottom and subtract padding */
+  .sns-grid{
+    position: fixed;
+    top: calc(var(--hero) - var(--sns-size) - var(--tb-vertPad));
+    left: 12px;
+    z-index: 1100;
+    display: grid;
+    grid-template-columns: repeat(3, var(--sns-size));
+    grid-auto-rows: var(--sns-size);
+    gap: 8px;
+  }
+
+  .sns-grid a{
+    width: var(--sns-size);
+    height: var(--sns-size);
+    display: inline-grid;
+    place-items: center;
+    overflow: hidden;
+  }
+
+  .sns-grid img{
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .sns-grid a:focus-visible{
+    outline: 2px solid #6b6bff;
+    outline-offset: 2px;
+  }
+
+  @font-face {
+    font-family: 'GmarketSansLight';
+    src: url('/assets/fonts/GmarketSansTTFLight.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+  body { font-family: 'GmarketSansLight', system-ui, 'Noto Sans KR', sans-serif; }
+
+  /* ===== Modal (Lyrics & More) unified glass style ===== */
+  .lp-modal[id^="modal"] .lp-modal__body{
+    background: transparent;              /* 스크롤 영역은 투명 */
+    overflow: auto;
+    scrollbar-gutter: stable;
+  }
+
+  .lp-modal[id^="modal"] .lp-modal__panel{
+    background: rgba(255,255,255,0.85);   /* 유리판 느낌 */
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.08);
+  }
+
+  /* 더보기/가사 공통: 내부 여백 균형 */
+  .lp-modal[id^="modal"] .lp-modal__panel,
+  .lp-modal[id^="modal"] .lp-modal__body{
+    padding: 16px;
+  }
+
+  @media (max-width: 640px){
+    .lp-modal[id^="modal"] .lp-modal__panel{
+      background: rgba(255,255,255,0.90);
+      border-radius: 14px;
+    }
+  }
+
+  /* (선택) 스크롤바 미세 스타일 */
+  .lp-modal[id^="modal"] .lp-modal__body::-webkit-scrollbar{
+    width: 10px;
+  }
+  .lp-modal[id^="modal"] .lp-modal__body::-webkit-scrollbar-thumb{
+    border-radius: 10px;
+    background: rgba(0,0,0,0.2);
+  }
+  .lp-modal[id^="modal"] .lp-modal__body::-webkit-scrollbar-track{
+    background: transparent;
+  }
+</style>
+</head>
+<body>
+  <div class="title-fixed">
+    <div class="title-bar">
+      <div class="title-ghost"></div>
+      <img class="title-center" src="./title1.png" alt="사자왕자의 노래방 타이틀(중앙)">
+      <img class="title-right"  src="./title2.png" alt="사자왕자 캐릭터(오른쪽)">
+    </div>
+  </div>
+
+  <main class="wrap">
+    <nav aria-label="SNS 링크" class="sns-grid" style="margin-bottom:8px;">
+      <a aria-label="YouTube" href="https://www.youtube.com/@lionprince.x" rel="noopener" target="_blank"><img alt="YouTube" src="./assets/icons/SNS01.png?v=20250812162819a"/></a>
+      <a aria-label="X" href="https://x.com/" rel="noopener" target="_blank"><img alt="X" src="./assets/icons/SNS02.png?v=20250812162819b"/></a>
+      <a aria-label="Naver Cafe" href="https://cafe.naver.com/" rel="noopener" target="_blank"><img alt="Naver Cafe" src="./assets/icons/SNS03.png?v=20250812162819c"/></a>
+    </nav>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <!-- 타이틀 높이에 맞춰 본문 밀기 -->
+  <script>
+  (function(){
+    function setHero(){
+      var t = document.querySelector('.title-fixed');
+      if(!t) return;
+      var h = t.getBoundingClientRect().height || 0;
+      document.documentElement.style.setProperty('--hero', (h) + 'px');
+    }
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      setTimeout(setHero, 0);
+    } else {
+      document.addEventListener('DOMContentLoaded', setHero);
+    }
+    var imgs = document.querySelectorAll('.title-fixed img');
+    imgs.forEach(function(img){ img.addEventListener('load', setHero, { once:false }); });
+    var tid;
+    window.addEventListener('resize', function(){
+      clearTimeout(tid);
+      tid = setTimeout(setHero, 100);
+    });
+  })();
+  </script>
+
+  <!-- 데이터 로드 -->
+  <script src="./assets/data/tracks.js?v=cache"></script>
+
+  <!-- 그리드 렌더 -->
+  <script>
+  (function () {
+    const grid = document.getElementById('grid');
+    if (!grid) return;
+    function fitLabel(el, options){
+      const max = (options && options.max) || 14;
+      const min = (options && options.min) || 10;
+      const step = (options && options.step) || 1;
+      let size = max;
+      el.style.fontSize = size + 'px';
+      el.style.whiteSpace = 'nowrap';
+      el.style.overflow = 'hidden';
+      el.style.textOverflow = 'ellipsis';
+      while (size > min && el.scrollWidth > el.clientWidth) {
+        size -= step;
+        el.style.fontSize = size + 'px';
+      }
+    }
+
+    try {
+      const data = (window.TRACKS && Array.isArray(window.TRACKS)) ? window.TRACKS : [];
+      if (!data.length) {
+        console.error('TRACKS 비어있음 또는 로드 실패');
+        grid.innerHTML = '<div style="padding:24px;font-weight:700;">데이터가 없습니다. assets/data/tracks.js를 확인하세요.</div>';
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      data.forEach(item => {
+        const a = document.createElement('a');
+        a.className = 'tile';
+        if (item.ratio) a.style.setProperty('--tile-ratio', item.ratio);
+        a.href = './detail.html?id=' + encodeURIComponent(item.id);
+        a.innerHTML = `
+          <img loading="lazy" src="${item.thumb}" alt="${item.artist} - ${item.title}">
+          <div class="label">${item.artist} - ${item.title}</div>
+        `;
+        frag.appendChild(a);
+      });
+      grid.innerHTML = '';
+      grid.appendChild(frag);
+
+      const labels = grid.querySelectorAll('.label');
+      labels.forEach(label => fitLabel(label, {max:14, min:10, step:1}));
+
+      let t;
+      window.addEventListener('resize', () => {
+        clearTimeout(t);
+        t = setTimeout(() => {
+          labels.forEach(label => fitLabel(label, {max:14, min:10, step:1}));
+        }, 100);
+      });
+    } catch (e) {
+      console.error(e);
+      grid.innerHTML = '<div style="padding:24px;font-weight:700;">스크립트 오류가 발생했습니다. 콘솔을 확인하세요.</div>';
+    }
+  })();
+  </script>
+</body>
+</html>
