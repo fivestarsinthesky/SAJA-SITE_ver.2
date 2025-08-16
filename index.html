@@ -47,19 +47,29 @@
   white-space:nowrap;
   overflow:hidden;
 }
-.label span {
-  display: inline-block;
-  padding-left: 100%;
-  animation: scrollText 10s linear infinite;
+
+.label span{
+  display:inline-block;
+  will-change: transform;
+  transform: translateX(0); /* 시작 지점: 왼쪽(보이는 상태) */
 }
-@keyframes scrollText {
-  0%   { transform: translateX(0%); }
-  100% { transform: translateX(-100%); }
+
+@keyframes scrollLeft{
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-1 * var(--scrollW, 0px))); }
 }
-@media (hover: hover) and (pointer: fine) {
-  .label span { animation: none; }
-  .label:hover span { animation: scrollText 10s linear infinite; }
+
+/* 모바일: 항상 무한 스크롤 */
+@media (hover: none), (pointer: coarse){
+  .label span{ animation: scrollLeft var(--dur, 10s) linear infinite; }
 }
+
+/* PC: 기본 정지, hover 시 1회만 스크롤 */
+@media (hover: hover) and (pointer: fine){
+  .label span{ animation: none; }
+  .label.is-scroll span{ animation: scrollLeft var(--dur, 10s) linear 0s 1 both; }
+}
+
 
 
   /* 단계적 반응형 */
@@ -310,6 +320,56 @@
     }
   })();
   </script>
+
+
+<script>
+(function(){
+  function setupMarquees(){
+    const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const tiles = document.querySelectorAll('.tile');
+    tiles.forEach(tile => {
+      const label = tile.querySelector('.label');
+      const span  = label && label.querySelector('span');
+      if(!label || !span) return;
+
+      // 초기화
+      span.style.transform = 'translateX(0)';
+      label.classList.remove('is-scroll');
+
+      // 오버플로우 계산 (흘려보낼 거리)
+      const overflow = Math.max(0, Math.ceil(span.scrollWidth - label.clientWidth));
+      label.style.setProperty('--scrollW', overflow + 'px');
+
+      // 거리 비례 시간 (px/초 ≈ 40), 6~16초 범위
+      const seconds = Math.min(16, Math.max(6, overflow / 40 + 6));
+      label.style.setProperty('--dur', seconds + 's');
+
+      if(canHover){
+        // 실수 호버 방지를 위한 약간의 딜레이
+        let tid = null;
+        const onEnter = () => {
+          if(overflow > 0){
+            tid = setTimeout(()=>label.classList.add('is-scroll'), 120);
+          }
+        };
+        const onLeave = () => {
+          clearTimeout(tid);
+          label.classList.remove('is-scroll');
+          span.style.transform = 'translateX(0)';
+        };
+        tile.addEventListener('mouseenter', onEnter);
+        tile.addEventListener('mouseleave', onLeave);
+      }
+    });
+  }
+  // 렌더/리사이즈 후 재측정
+  let rid;
+  window.addEventListener('resize', ()=>{ clearTimeout(rid); rid = setTimeout(setupMarquees, 150); });
+  window.addEventListener('load', setupMarquees, {once:true});
+  setTimeout(setupMarquees, 150);
+  setTimeout(setupMarquees, 600);
+})();
+</script>
 
 </body>
 </html>
