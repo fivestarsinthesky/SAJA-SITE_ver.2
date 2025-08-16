@@ -35,32 +35,15 @@
   .tile:hover img{ transform:scale(1.03); }
 
   /* 라벨: 한 줄 유지 + 가독성 */
-  
-.label{
-  position:absolute; left:0; right:0; bottom:0;
-  padding:6px 8px;
-  color:#fff;
-  background:linear-gradient(to top, rgba(0,0,0,.65), rgba(0,0,0,0));
-  font-weight:700;
-  font-size:14px; /* fixed */
-  line-height:1.1;
-  white-space:nowrap;
-  overflow:hidden;
-}
-.label span {
-  display: inline-block;
-  padding-left: 100%;
-  animation: scrollText 10s linear infinite;
-}
-@keyframes scrollText {
-  0%   { transform: translateX(0%); }
-  100% { transform: translateX(-100%); }
-}
-@media (hover: hover) and (pointer: fine) {
-  .label span { animation: none; }
-  .label:hover span { animation: scrollText 10s linear infinite; }
-}
-
+  .label{
+    position:absolute; left:0; right:0; bottom:0;
+    padding:6px 8px;
+    color:#fff; background:linear-gradient(to top, rgba(0,0,0,.65), rgba(0,0,0,0));
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    font-weight:700;
+    line-height:1.1;
+    font-size:14px;
+  }
 
   /* 단계적 반응형 */
   @media (max-width:1400px){ .grid{ grid-template-columns:repeat(8,1fr); } }
@@ -207,29 +190,6 @@
     .wrap{ padding-top: calc(var(--hero) + 8px); } /* mobile: avoid overlap with fixed title */
   }
 
-
-.label span{
-  display:inline-block;
-  padding-left:100%;
-  animation: scrollText 10s linear infinite;
-}
-
-@keyframes scrollText{
-  0%   { transform: translateX(0%); }
-  100% { transform: translateX(-100%); }
-}
-
-/* PC에서는 hover시에만 무빙, 모바일은 항상 무빙 유지 */
-@media (hover: hover) and (pointer: fine){
-  .label span{ animation:none; }
-  .label:hover span{ animation: scrollText 10s linear infinite; }
-}
-
-/* 접근성: 모션 감소 설정일 때는 정지 */
-@media (prefers-reduced-motion: reduce){
-  .label span{ animation:none !important; }
-}
-
 </style>
 </head>
 <body>
@@ -282,7 +242,20 @@
   (function () {
     const grid = document.getElementById('grid');
     if (!grid) return;
-}
+    function fitLabel(el, options){
+      const max = (options && options.max) || 14;
+      const min = (options && options.min) || 10;
+      const step = (options && options.step) || 1;
+      let size = max;
+      el.style.fontSize = size + 'px';
+      el.style.whiteSpace = 'nowrap';
+      el.style.overflow = 'hidden';
+      el.style.textOverflow = 'ellipsis';
+      while (size > min && el.scrollWidth > el.clientWidth) {
+        size -= step;
+        el.style.fontSize = size + 'px';
+      }
+    }
 
     try {
       const data = (window.TRACKS && Array.isArray(window.TRACKS)) ? window.TRACKS : [];
@@ -300,7 +273,7 @@
         a.href = './detail.html?id=' + encodeURIComponent(item.id);
         a.innerHTML = `
           <img loading="lazy" src="${item.thumb}" alt="${item.artist} - ${item.title}">
-          <div class="label"><span>${item.artist} - ${item.title}</span></div>
+          <div class="label">${item.artist} - ${item.title}</div>
         `;
         frag.appendChild(a);
       });
@@ -308,13 +281,13 @@
       grid.appendChild(frag);
 
       const labels = grid.querySelectorAll('.label');
-      // fitLabel removed for fixed font-size
+      labels.forEach(label => fitLabel(label, {max:14, min:10, step:1}));
 
       let t;
       window.addEventListener('resize', () => {
         clearTimeout(t);
         t = setTimeout(() => {
-          // fitLabel removed for fixed font-size
+          labels.forEach(label => fitLabel(label, {max:14, min:10, step:1}));
         }, 100);
       });
     } catch (e) {
