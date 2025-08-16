@@ -184,19 +184,10 @@
 
   /* 가사/더보기 iframe 여백 추가하여 스크롤바 잘림 방지 */
   .content-iframe { box-sizing: border-box; padding-right: 0; }
-
-  /* 모바일 여백/간격 보정 */
-  .content.card { margin-bottom: 16px; }
   @media (max-width:900px){
     .left-col > .card + .card{ margin-top:12px; }
   }
-
-
-/* === Robust mobile spacing patch (explicit margins) === */
-@media (max-width:900px){
-  /* Stack panels without relying on flex-gap */
-  .pc-grid{ display:block !important; }
-  .left-col{ margin-bottom:16px !important; } /* gap between left stack and right panel */
+.left-col{ margin-bottom:16px !important; } /* gap between left stack and right panel */
   .content.card{ height:auto !important; }    /* prevent overflow eating bottom padding */
   .page{ padding-bottom:16px !important; }    /* bottom breathing room */
 }
