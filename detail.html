@@ -268,7 +268,35 @@ body{
   box-sizing:border-box;
   padding:0 0 max(16px, env(safe-area-inset-bottom));
 }
-</style></head>
+</style>
+<style id="title-ticker">
+/* === Title ticker (PC+Mobile when overflow) === */
+#hdrTitle.ticker{
+  position: relative;
+  overflow: hidden;
+  text-overflow: clip; /* 말줄임표 대신 흘러가기 */
+}
+#hdrTitle.ticker .ticker-track{
+  display: inline-flex;
+  align-items: center;
+  gap: 24px; /* 복제 텍스트 사이 간격 */
+  will-change: transform;
+  animation: title-ticker var(--ticker-duration, 12s) linear infinite;
+}
+#hdrTitle.ticker span{ white-space: nowrap; }
+
+@keyframes title-ticker{
+  from{ transform: translateX(0); }
+  to  { transform: translateX(calc(-1 * var(--ticker-step, 300px))); }
+}
+
+/* 접근성: '움직임 줄이기' 존중 */
+@media (prefers-reduced-motion: reduce){
+  #hdrTitle.ticker .ticker-track{ animation: none !important; transform: none !important; }
+}
+</style>
+
+</head>
 <body>
 <header>
 <a class="btn-back" href="./index.html">🏠</a>
@@ -344,7 +372,35 @@ body{
     font-display: swap;
   }
   body{font-family:'GmarketSansLight', system-ui, "Noto Sans KR", sans-serif;}
-</style></head><body>
+</style>
+<style id="title-ticker">
+/* === Title ticker (PC+Mobile when overflow) === */
+#hdrTitle.ticker{
+  position: relative;
+  overflow: hidden;
+  text-overflow: clip; /* 말줄임표 대신 흘러가기 */
+}
+#hdrTitle.ticker .ticker-track{
+  display: inline-flex;
+  align-items: center;
+  gap: 24px; /* 복제 텍스트 사이 간격 */
+  will-change: transform;
+  animation: title-ticker var(--ticker-duration, 12s) linear infinite;
+}
+#hdrTitle.ticker span{ white-space: nowrap; }
+
+@keyframes title-ticker{
+  from{ transform: translateX(0); }
+  to  { transform: translateX(calc(-1 * var(--ticker-step, 300px))); }
+}
+
+/* 접근성: '움직임 줄이기' 존중 */
+@media (prefers-reduced-motion: reduce){
+  #hdrTitle.ticker .ticker-track{ animation: none !important; transform: none !important; }
+}
+</style>
+
+</head><body>
   <h1>${title}</h1>
   <div class="mono">${body}</div>
 </body></html>`;
@@ -352,6 +408,38 @@ body{
   function setPanel($iframe, html){
     try{ $iframe.srcdoc = html; }catch(e){}
     try{ $iframe.src = "data:text/html;charset=utf-8," + encodeURIComponent(html); }catch(e){}
+  }
+  function setupTicker(el){
+    if(!el) return;
+
+    // 원본문 저장 및 초기화(중복 래핑 방지)
+    const original = el.getAttribute('data-title') || el.textContent.trim();
+    el.setAttribute('data-title', original);
+    el.classList.remove('ticker');
+    el.innerHTML = original.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+
+    // 넘치지 않으면 그대로(PC/모바일 공통: 말줄임 유지)
+    if(el.scrollWidth <= el.clientWidth) return;
+
+    // 티커 구성(텍스트 2개 복제)
+    el.classList.add('ticker');
+    const safe = el.getAttribute('data-title').replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+    el.innerHTML = `<div class="ticker-track">
+      <span class="t1">${safe}</span><span class="t2">${safe}</span>
+    </div>`;
+
+    // 길이에 비례해 속도 자동 조절
+    requestAnimationFrame(()=>{
+      const first = el.querySelector('.t1');
+      const step = (first ? first.offsetWidth : el.scrollWidth) + 24;  // gap과 동일
+      const speed = Math.max(70, Math.min(120, window.innerWidth/10)); // px/s, 화면에 비례
+      const duration = Math.max(8, step / speed);
+      const track = el.querySelector('.ticker-track');
+      if(track){
+        track.style.setProperty('--ticker-step', step + 'px');
+        track.style.setProperty('--ticker-duration', duration + 's');
+      }
+    });
   }
 
   function initDetail(){
@@ -361,6 +449,11 @@ body{
 
     // 헤더 제목/메타
     document.getElementById('hdrTitle').textContent = (data.artist&&data.title)? `${data.artist} — ${data.title}` : '상세';
+    const $hdr = document.getElementById('hdrTitle');
+    setupTicker($hdr);                       // 최초 1회
+    let __tm;                                // 리사이즈 디바운스
+    window.addEventListener('resize', ()=>{ clearTimeout(__tm); __tm = setTimeout(()=>setupTicker($hdr), 150); });
+
     document.getElementById('cMeta').textContent   = (data.artist&&data.title)? `${data.artist} · ${data.title}` : '';
 
     // 유튜브
