@@ -238,6 +238,25 @@ body{ height:100vh !important; }  /* viewport lock */
   .left-col{ margin-bottom:10px !important; }   /* mobile gap = 10px */
   .content.card{ margin-bottom:0 !important; }  /* neutralize global 12px margin on mobile */
 }
+</style><style id="viewport-lock-final">
+/* === VIEWPORT & INTERNAL SCROLL (final block) === */
+/* 1) ‘보이는’ 뷰포트에 정확히 맞추기 */
+body{ height:100vh; overflow:hidden; }
+@supports (height: 100svh){ body{ height:100svh; } }  /* iOS Safari */
+@supports (height: 100dvh){ body{ height:100dvh; } }  /* 최신 브라우저 */
+
+/* 2) 높이 폭주 차단(체인 전체) */
+.page, .pc-grid, .content.card, .content-body{ min-height:0 !important; }
+
+/* 3) 가사 패널 내부만 스크롤 + 바닥 16px 여백(‘안쪽’에서 처리) */
+.content.card{ display:flex; flex-direction:column; }
+.content-body{
+  flex:1 1 auto;
+  overflow:auto !important;
+  -webkit-overflow-scrolling:touch;
+  box-sizing:border-box;
+  padding:0 0 max(16px, env(safe-area-inset-bottom));
+}
 </style></head>
 <body>
 <header>
