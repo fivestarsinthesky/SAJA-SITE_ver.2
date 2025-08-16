@@ -277,13 +277,12 @@
   <!-- 데이터 로드 -->
   <script src="./assets/data/tracks.js?v=cache"></script>
 
+  
   <!-- 그리드 렌더 -->
   <script>
   (function () {
     const grid = document.getElementById('grid');
     if (!grid) return;
-}
-
     try {
       const data = (window.TRACKS && Array.isArray(window.TRACKS)) ? window.TRACKS : [];
       if (!data.length) {
@@ -291,7 +290,6 @@
         grid.innerHTML = '<div style="padding:24px;font-weight:700;">데이터가 없습니다. assets/data/tracks.js를 확인하세요.</div>';
         return;
       }
-
       const frag = document.createDocumentFragment();
       data.forEach(item => {
         const a = document.createElement('a');
@@ -306,22 +304,12 @@
       });
       grid.innerHTML = '';
       grid.appendChild(frag);
-
-      const labels = grid.querySelectorAll('.label');
-      // fitLabel removed for fixed font-size
-
-      let t;
-      window.addEventListener('resize', () => {
-        clearTimeout(t);
-        t = setTimeout(() => {
-          // fitLabel removed for fixed font-size
-        }, 100);
-      });
     } catch (e) {
       console.error(e);
       grid.innerHTML = '<div style="padding:24px;font-weight:700;">스크립트 오류가 발생했습니다. 콘솔을 확인하세요.</div>';
     }
   })();
   </script>
+
 </body>
 </html>
