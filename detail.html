@@ -245,15 +245,18 @@
 }
 
 
-/* === Mobile safe patch: exact 12px between left-col and content.card (scoped) === */
+/* === Mobile: remove extra bottom space inside YouTube panel & fix 12px spacing === */
 @media (max-width:900px){
-  /* 0) Normalize container spacing inside pc-grid only */
+  /* 컨테이너 간격은 0으로 초기화 (겹침 방지) */
   .pc-grid{ display:flex !important; flex-direction:column !important; row-gap:0 !important; column-gap:0 !important; gap:0 !important; }
 
-  /* 1) Between-panels spacing source: ONLY here */
-  .pc-grid > .left-col{ margin:0 0 12px 0 !important; }
+  /* 두 패널 사이 간격의 유일한 출처: left-col 아래 12px */
+  .pc-grid > .left-col{ margin:0 0 12px 0 !important; padding-bottom:0 !important; }
 
-  /* 2) Prevent any other margins from stacking inside the grid */
+  /* 유튜브 iframe 및 내부 여백 제거 */
+  .pc-grid > .left-col iframe{ display:block; margin:0 !important; padding:0 !important; }
+
+  /* 가사 패널의 여분 마진 제거 (합산 방지) */
   .pc-grid > .content.card{ margin:0 !important; }
 }
 
