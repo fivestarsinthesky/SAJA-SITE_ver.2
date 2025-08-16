@@ -344,34 +344,7 @@ body{
     font-display: swap;
   }
   body{font-family:'GmarketSansLight', system-ui, "Noto Sans KR", sans-serif;}
-</style>
-
-<style id="ticker-css">
-/* === Header title ticker (모바일에서 말줄임일 때만; 폰트 크기 변경 없음) === */
-#hdrTitle.ticker{
-  position: relative;
-  overflow: hidden;
-  white-space: nowrap;
-}
-#hdrTitle.ticker .ticker-track{
-  position: absolute;
-  left: 0; top: 0;
-  display: inline-flex;
-  gap: var(--ticker-gap, 24px);
-  white-space: nowrap;
-  will-change: transform;
-  animation: ticker-move var(--ticker-duration, 12s) linear infinite;
-}
-@keyframes ticker-move{
-  from{ transform: translateX(0); }
-  to  { transform: translateX(calc(-1 * var(--ticker-step, 300px))); }
-}
-@media (prefers-reduced-motion: reduce){
-  #hdrTitle.ticker .ticker-track{ animation: none; }
-}
-</style>
-
-</head><body>
+</style></head><body>
   <h1>${title}</h1>
   <div class="mono">${body}</div>
 </body></html>`;
@@ -388,7 +361,6 @@ body{
 
     // 헤더 제목/메타
     document.getElementById('hdrTitle').textContent = (data.artist&&data.title)? `${data.artist} — ${data.title}` : '상세';
-    try{ setupTicker(document.getElementById('hdrTitle')); }catch(e){}
     document.getElementById('cMeta').textContent   = (data.artist&&data.title)? `${data.artist} · ${data.title}` : '';
 
     // 유튜브
@@ -436,63 +408,7 @@ body{
   document.addEventListener("tracks-ready", function(){ 
     try { initDetail(); } catch(e){ console.error("initDetail error", e); } 
   });
-
-  // Re-evaluate ticker on resize (debounced)
-  (function(){
-    let t;
-    window.addEventListener('resize', function(){
-      clearTimeout(t);
-      t = setTimeout(function(){ try{ setupTicker(document.getElementById('hdrTitle')); }catch(e){} }, 120);
-    }, { passive:true });
-  })();
-
 })();
-
-
-/* === Header title ticker logic === */
-function setupTicker(el){
-  if(!el) return;
-
-  // Restore original once to avoid double-wrapping
-  const original = el.getAttribute('data-title') || el.textContent.trim();
-  el.setAttribute('data-title', original);
-  el.classList.remove('ticker');
-  el.style.removeProperty('width'); // unlock width in case of previous lock
-  el.innerHTML = original.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
-
-  // Mobile-only
-  const isMobile = window.matchMedia('(max-width:900px)').matches;
-  if(!isMobile) return;
-
-  // Only when ellipsized (would overflow)
-  // Force measurement after layout
-  if (el.scrollWidth <= el.clientWidth) return;
-
-  // Lock the current visible width so layout doesn't expand
-  const lockWidth = el.clientWidth;
-  el.style.width = lockWidth + 'px';
-
-  // Build ticker track with duplicated text
-  const safe = original.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
-  el.classList.add('ticker');
-  el.innerHTML = '<div class="ticker-track"><span class="t1">'+safe+'</span><span class="t2">'+safe+'</span></div>';
-
-  // Compute step (one text width + gap), and duration ~ length/speed
-  requestAnimationFrame(()=>{
-    const first = el.querySelector('.t1');
-    const gap = 24;
-    const step = (first ? first.offsetWidth : el.scrollWidth) + gap;
-    const speed = Math.max(70, Math.min(120, window.innerWidth/10)); // px/s
-    const duration = Math.max(8, step / speed);
-    const track = el.querySelector('.ticker-track');
-    if(track){
-      track.style.setProperty('--ticker-step', step + 'px');
-      track.style.setProperty('--ticker-duration', duration + 's');
-      track.style.setProperty('--ticker-gap', gap + 'px');
-    }
-  });
-}
-
 </script>
 </body>
 </html>
