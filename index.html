@@ -105,9 +105,10 @@
   :root{ --sns-size: 56px; }
   @media (max-width: 640px){ :root{ --sns-size: 48px; } }
 
+  /* UPDATED: align SNS grid bottom with title bar bottom */
   .sns-grid{
     position: fixed;
-    top: calc(var(--hero) - var(--tb-vertPad));
+    top: calc(var(--hero) - var(--sns-size)); /* bottom aligned with title bar */
     left: 12px;
     z-index: 1100;
     display: grid;
