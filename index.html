@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>?�자?�자???�래�?| ?�스??그리??/title>
+<title>사자왕자의 노래방 | 포스터 그리드</title>
 <style>
   :root { --gap: 8px; --tile-ratio: 56.25%; --maxw: 1600px; --hero: clamp(46px, 10.6vw, 173px); }
 
   /* ====== Title Bar sizing variables ====== */
   :root{
-    --tb-sidePad: 12px;
+    --tb-sidePad: clamp(12px, 3vw, 24px);
     --tb-vertPad: clamp(8px,  2vw, 16px);
     --tb-gap:     clamp(8px,  2vw, 16px);
     --tb-centerW: clamp(180px, 42vw, 520px);
@@ -27,14 +27,14 @@
   /* UPDATED: make grid stick right under the title */
   .wrap { max-width: var(--maxw); margin:0 auto; padding:24px 24px 28px; padding-top: var(--hero); }
 
-  /* 기본 10??*/
+  /* 기본 10열 */
   .grid { display:grid; grid-template-columns:repeat(10,1fr); gap:var(--gap); }
   .tile { position:relative; overflow:hidden; border-radius:12px; border: none; background:#f7f7f7; }
   .tile::before { content:""; display:block; padding-top: var(--tile-ratio); }
   .tile img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .2s; }
   .tile:hover img{ transform:scale(1.03); }
 
-  /* ?�벨: ??�??��? + 가?�성 */
+  /* 라벨: 한 줄 유지 + 가독성 */
   .label{
     position:absolute; left:0; right:0; bottom:0;
     padding:6px 8px;
@@ -45,13 +45,13 @@
     font-size: 10px;
   }
 
-  /* ?�계??반응??*/
+  /* 단계적 반응형 */
   @media (max-width:1400px){ .grid{ grid-template-columns:repeat(8,1fr); } }
   @media (max-width:1200px){ .grid{ grid-template-columns:repeat(6,1fr); } }
   @media (max-width:900px){  .grid{ grid-template-columns:repeat(4,1fr); } .wrap{ padding:16px 20px 24px; } }
   @media (max-width:640px){  .grid{ grid-template-columns:repeat(2,1fr); } }
 
-  /* ?�버?�이 */
+  /* 오버레이 */
   body::before{
     content:"";
     position:fixed; inset:0;
@@ -59,13 +59,13 @@
     pointer-events:none;
   }
 
-  /* ===== ?�단 고정 ?�?��? �? 중앙/?�른�??��?지 ===== */
+  /* ===== 상단 고정 타이틀 바: 중앙/오른쪽 이미지 ===== */
   .title-fixed{
     position: fixed;
     top: 0; left: 0;
     width: 100vw;
     z-index: 1000;
-    pointer-events: none; /* ?��? ?�소�??�릭 가??*/
+    pointer-events: none; /* 내부 요소만 클릭 가능 */
   }
   .title-bar{
     display:flex;
@@ -82,9 +82,9 @@
     height:auto;
     width:100%;
     max-width:none;
-    pointer-events:auto; /* ?��?지 ?�릭 ?�용 */
+    pointer-events:auto; /* 이미지 클릭 허용 */
   }
-  .title-ghost{ /* ?�쪽 균형???�명 ?�페?�서 */
+  .title-ghost{ /* 왼쪽 균형용 투명 스페이서 */
     width:var(--tb-rightW);
     height:1px;
     opacity:0;
@@ -99,10 +99,10 @@
     }
   }
 
-  /* ?�?��? ?�이만큼 본문???�래�?밀�? JS가 --hero???�제 ?�이 주입 */
+  /* 타이틀 높이만큼 본문을 아래로 밀기: JS가 --hero에 실제 높이 주입 */
   /* (moved up: now just var(--hero)) */
 
-  /* ------- SNS ?��? 그리??(?�단 좌측 고정) ------- */
+  /* ------- SNS 작은 그리드 (상단 좌측 고정) ------- */
   :root{ --sns-size: 56px; }
   @media (max-width: 640px){ :root{ --sns-size: 32px; } }
 
@@ -148,20 +148,20 @@
 
   /* ===== Modal (Lyrics & More) unified glass style ===== */
   .lp-modal[id^="modal"] .lp-modal__body{
-    background: transparent;              /* ?�크�??�역?� ?�명 */
+    background: transparent;              /* 스크롤 영역은 투명 */
     overflow: auto;
     scrollbar-gutter: stable;
   }
 
   .lp-modal[id^="modal"] .lp-modal__panel{
-    background: rgba(255,255,255,0.85);   /* ?�리???�낌 */
+    background: rgba(255,255,255,0.85);   /* 유리판 느낌 */
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.08);
   }
 
-  /* ?�보�?가??공통: ?��? ?�백 균형 */
+  /* 더보기/가사 공통: 내부 여백 균형 */
   .lp-modal[id^="modal"] .lp-modal__panel,
   .lp-modal[id^="modal"] .lp-modal__body{
     padding: 16px;
@@ -174,7 +174,7 @@
     }
   }
 
-  /* (?�택) ?�크롤바 미세 ?��???*/
+  /* (선택) 스크롤바 미세 스타일 */
   .lp-modal[id^="modal"] .lp-modal__body::-webkit-scrollbar{
     width: 10px;
   }
@@ -231,26 +231,26 @@
 
 /* === Mobile: title & SNS follow the page flow (no fixed) === */
 @media (max-width: 900px){
-  /* ?�?��?바�? 고정 ?�제: 문서 ?�름???�기 */
+  /* 타이틀바를 고정 해제: 문서 흐름에 넣기 */
   .title-fixed{
     position: static !important;
     width: 100% !important;
     z-index: auto !important;
-    pointer-events: auto !important; /* ?��?지 ?�릭 ?��? */
+    pointer-events: auto !important; /* 이미지 클릭 유지 */
   }
 
-  /* ?�?��? ?�이??맞춰 본문??밀??�??�거 (?�제 고정???�님) */
+  /* 타이틀 높이에 맞춰 본문을 밀던 값 제거 (이제 고정이 아님) */
   .wrap{
-    padding-top: 16px !important;   /* ?�연?�러???�단 간격�??��? */
+    padding-top: 16px !important;   /* 자연스러운 상단 간격만 유지 */
   }
 
-  /* SNS 그리?�도 고정 ?�제 + ?�연?�러??간격 */
+  /* SNS 그리드도 고정 해제 + 자연스러운 간격 */
   .sns-grid{
     position: static !important;
     top: auto !important;
     left: auto !important;
     z-index: auto !important;
-    margin: 0 0 12px !important;   /* ?�?��? 바로 ?�래 붙게 */
+    margin: 8px 0 12px !important;   /* 타이틀 바로 아래 붙게 */
   }
 }
 
@@ -260,8 +260,8 @@
   <div class="title-fixed">
     <div class="title-bar">
       <div class="title-ghost"></div>
-      <img class="title-center" src="./title1.png" alt="?�자?�자???�래�??�?��?(중앙)">
-      <img class="title-right"  src="./title2.png" alt="?�자?�자 캐릭???�른�?">
+      <img class="title-center" src="./title1.png" alt="사자왕자의 노래방 타이틀(중앙)">
+      <img class="title-right"  src="./title2.png" alt="사자왕자 캐릭터(오른쪽)">
     </div>
   </div>
 
@@ -273,12 +273,12 @@
     </nav>
     <div class="grid" id="grid"></div>
   <div class="page-footer">
-  <span>??콘텐�?· © 2025. ?�물많�? T?�자. · 모든 ?�?�물??권리???��??�자???�자?�자?�게 ?�습?�다.</span>
-  <span>Fan-made · © 2025. ?�물많�? T?�자. · All original content belongs to lionprince.x.</span>
+  <span>팬 콘텐츠 · © 2025. 눈물많은 T상자. · 모든 저작물의 권리는 원저작자인 사자왕자에게 있습니다.</span>
+  <span>Fan-made · © 2025. 눈물많은 T상자. · All original content belongs to lionprince.x.</span>
 </div>
   </main>
 
-  <!-- ?�?��? ?�이??맞춰 본문 밀�?-->
+  <!-- 타이틀 높이에 맞춰 본문 밀기 -->
   <script>
   (function(){
     function setHero(){
@@ -302,10 +302,10 @@
   })();
   </script>
 
-  <!-- ?�이??로드 -->
+  <!-- 데이터 로드 -->
   <script src="./assets/data/tracks.js?v=cache"></script>
 
-  <!-- 그리???�더 -->
+  <!-- 그리드 렌더 -->
   <script>
   (function () {
     const grid = document.getElementById('grid');
@@ -328,8 +328,8 @@
     try {
       const data = (window.TRACKS && Array.isArray(window.TRACKS)) ? window.TRACKS : [];
       if (!data.length) {
-        console.error('TRACKS 비어?�음 ?�는 로드 ?�패');
-        grid.innerHTML = '<div style="padding:24px;font-weight:700;">?�이?��? ?�습?�다. assets/data/tracks.js�??�인?�세??</div>';
+        console.error('TRACKS 비어있음 또는 로드 실패');
+        grid.innerHTML = '<div style="padding:24px;font-weight:700;">데이터가 없습니다. assets/data/tracks.js를 확인하세요.</div>';
         return;
       }
 
@@ -360,7 +360,7 @@
       });
     } catch (e) {
       console.error(e);
-      grid.innerHTML = '<div style="padding:24px;font-weight:700;">?�크립트 ?�류가 발생?�습?�다. 콘솔???�인?�세??</div>';
+      grid.innerHTML = '<div style="padding:24px;font-weight:700;">스크립트 오류가 발생했습니다. 콘솔을 확인하세요.</div>';
     }
   })();
   </script>
@@ -368,4 +368,3 @@
 
 </body>
 </html>
-<!-- deploy trigger -->
