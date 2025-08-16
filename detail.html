@@ -409,11 +409,15 @@ body{
     return `<!doctype html><html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <style>
   html,body{height:100%} body{margin:0;padding:20px;background:#181818;color:#fff;font-family:system-ui,"Noto Sans KR",sans-serif;line-height:1.55;font-size:16px;overflow:auto;-webkit-overflow-scrolling:touch}
+/* PC 전용 여백 */
+@media (min-width:901px){
+  body{ padding:24px 24px 28px 24px; }
+}
 h1{font-size:18px;margin:0 0 10px 0}
 /* PC 전용 */
 @media (min-width:901px){
-  body{ font-size:20px; } /* 본문 */
-  h1{ font-size:22px; }   /* 제목 */
+  body{ font-size:24px; } /* 본문 */
+  h1{ font-size:26px; }   /* 제목 */
 }
   h1{font-size:18px;margin:0 0 10px 0}
   .mono{white-space:pre-wrap;word-break:keep-all}
