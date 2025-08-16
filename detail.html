@@ -238,6 +238,29 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
     padding: 16px !important;
   }
 }
+</style><style id="mobile-gap-viewport-final">
+/* === FINAL: viewport lock + mobile gap=10 (minimal) === */
+/* 1) 문서를 ‘보이는’ 뷰포트에 딱 고정 + 본문 1fr */
+body{
+  height:100vh; overflow:hidden;
+  display:grid; grid-template-rows:auto 1fr;
+}
+@supports (height:100svh){ body{ height:100svh; } }
+@supports (height:100dvh){ body{ height:100dvh; } }
+
+.page, .pc-grid, .content.card, .content-body{ min-height:0 !important; }
+.content.card{ display:flex; flex-direction:column; }
+.content-body{
+  flex:1 1 auto; overflow:auto !important;
+  -webkit-overflow-scrolling:touch;
+  box-sizing:border-box; padding:0 0 16px;
+}
+
+/* 2) 모바일 간격의 주인은 부모 gap 하나(10px) */
+@media (max-width:900px){
+  .pc-grid{ display:flex !important; flex-direction:column !important; gap:10px !important; }
+  .pc-grid > *{ margin:0 !important; }
+}
 </style></head>
 <body>
 <header>
