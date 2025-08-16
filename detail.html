@@ -230,7 +230,15 @@ header .actions a{ font-size:clamp(11px, 3.2vw, 14px); padding:clamp(2px, 0.6vw,
     loadNext();
   })();
 </script>
-</head>
+<style id="minimal-patch">
+/* === MINIMAL PATCH: requested only === */
+body{ height:100vh !important; }  /* viewport lock */
+
+@media (max-width:900px){
+  .left-col{ margin-bottom:10px !important; }   /* mobile gap = 10px */
+  .content.card{ margin-bottom:0 !important; }  /* neutralize global 12px margin on mobile */
+}
+</style></head>
 <body>
 <header>
 <a class="btn-back" href="./index.html">🏠</a>
