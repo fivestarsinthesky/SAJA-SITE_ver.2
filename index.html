@@ -1,203 +1,215 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>썸네일 라벨 무빙 테스트 (개선판)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>포스터 그리드 (무빙 + SNS 안정화)</title>
   <style>
-    body {
-      margin: 0;
-      font-family: system-ui, "Noto Sans KR", sans-serif;
-      background: #fff;
-      color: #111;
+    :root{
+      --gap: 8px;
+      --tile-ratio: 56.25%;
+      --maxw: 1600px;
+      --hero: clamp(46px, 10.6vw, 173px);
+      --tb-sidePad: clamp(12px, 3vw, 24px);
+      --tb-vertPad: clamp(8px,  2vw, 16px);
+      --tb-gap:     clamp(8px,  2vw, 16px);
+      --tb-centerW: clamp(180px, 42vw, 520px);
+      --tb-rightW:  clamp(80px,  18vw, 240px);
+      --sns-size: 48px; /* PC 기본 */
     }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px;
-      padding: 20px;
-    }
-    .tile {
-      position: relative;
-      overflow: hidden;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      background:#f8f8f8;
-    }
-    .tile img {
-      display: block;
-      width: 100%;
-      height: auto;
-      aspect-ratio: 3 / 2;
-      object-fit: cover;
+    @media (max-width:640px){
+      :root{ --sns-size: 28px; } /* 모바일 */
     }
 
-    /* 라벨 영역 */
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, "Noto Sans KR", sans-serif;
+      background: #fff;
+      color:#111;
+      min-height:100vh;
+    }
+
+    .wrap{ max-width:var(--maxw); margin:0 auto; padding:24px 24px 28px; padding-top: var(--hero); }
+
+    /* GRID */
+    .grid{ display:grid; grid-template-columns:repeat(10,1fr); gap:var(--gap); }
+    .tile{ position:relative; overflow:hidden; border-radius:12px; background:#f7f7f7; }
+    .tile::before{ content:""; display:block; padding-top:var(--tile-ratio); }
+    .tile img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    @media (max-width:1400px){ .grid{ grid-template-columns:repeat(8,1fr); } }
+    @media (max-width:1200px){ .grid{ grid-template-columns:repeat(6,1fr); } }
+    @media (max-width:900px){  .grid{ grid-template-columns:repeat(4,1fr); } .wrap{ padding:16px 20px 24px; } }
+    @media (max-width:640px){  .grid{ grid-template-columns:repeat(2,1fr); } }
+
+    /* TITLE BAR (샘플 최소 구조) */
+    .title-fixed{ position:fixed; top:0; left:0; width:100vw; z-index:1000; pointer-events:none; }
+    .title-bar{ display:flex; align-items:center; justify-content:space-between; gap:var(--tb-gap); padding:var(--tb-vertPad) var(--tb-sidePad); }
+    .title-center{ width:var(--tb-centerW); pointer-events:auto; }
+    .title-right{ width:var(--tb-rightW); object-fit:contain; pointer-events:auto; margin-right:30px; }
+    .title-ghost{ width:var(--tb-rightW); height:1px; opacity:0; }
+
+    /* SNS GRID — 안전 고정 (과대확대 방지) */
+    .sns-grid{
+      position: fixed;
+      top: calc(var(--hero) - var(--sns-size, 40px) - var(--tb-vertPad));
+      left: 12px;
+      z-index: 1100;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, var(--sns-size, 40px)));
+      grid-auto-rows: var(--sns-size, 40px); /* fallback 보호 */
+      gap: 8px;
+    }
+    @media (max-width:640px){ .sns-grid{ gap:6px; } }
+    .sns-grid a{
+      width: var(--sns-size, 40px);
+      height: var(--sns-size, 40px);
+      display: inline-grid;
+      place-items: center;
+      overflow: hidden;
+    }
+    .sns-grid img{
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      max-width: var(--sns-size, 40px);
+      max-height: var(--sns-size, 40px);
+      display: block;
+    }
+
+    /* LABEL (무빙: PC-rest/hover 1회, Mobile infinite) */
     .label{
       position:absolute; left:0; right:0; bottom:0;
       padding:6px 8px;
       color:#fff;
       background:linear-gradient(to top, rgba(0,0,0,.65), rgba(0,0,0,0));
       font-weight:700;
-      font-size:14px; /* 고정 */
+      font-size:14px;      /* 고정 폰트 */
       line-height:1.1;
       white-space:nowrap;
       overflow:hidden;
       contain: content;
     }
-    /* 우측 페이드(말줄임 느낌을 부드럽게) */
-    .label::after{
+    .label::after{ /* 우측 페이드 (선택) */
       content:"";
-      position:absolute; right:0; bottom:0; top:0;
+      position:absolute; right:0; top:0; bottom:0;
       width:40px; pointer-events:none;
-      background: linear-gradient(to left, rgba(0,0,0,0.35), rgba(0,0,0,0));
+      background:linear-gradient(to left, rgba(0,0,0,.35), rgba(0,0,0,0));
     }
-
-    .label span{
+    .label > span{
       display:inline-block;
       will-change: transform;
-      transform: translateX(0); /* 기본: 고정(왼쪽부터 보이기) */
+      transform: translateX(0); /* 기본은 정지(왼쪽부터 보이기) */
     }
-
     @keyframes scrollLeft{
       from { transform: translateX(0); }
       to   { transform: translateX(calc(-1 * var(--scrollW, 0px))); }
     }
-
-    /* 모바일(hover 없음): 자동 무한 스크롤 */
+    /* 모바일: 자동 무한 */
     @media (hover: none), (pointer: coarse){
-      .label span{
-        animation: scrollLeft var(--dur, 10s) linear infinite;
-      }
+      .label > span{ animation: scrollLeft var(--dur, 10s) linear infinite; }
     }
-
-    /* PC(hover 가능): 기본 정지, 타일 hover 시 한 번만 스크롤 */
+    /* PC: 호버 시 1회 */
     @media (hover: hover) and (pointer: fine){
-      .label span{ animation: none; }
-      .label.is-scroll span{ animation: scrollLeft var(--dur, 10s) linear 0s 1 both; }
+      .label > span{ animation: none; }
+      .label.is-scroll > span{ animation: scrollLeft var(--dur, 10s) linear 0s 1 both; }
     }
-
-    /* 접근성: 모션 감소 설정이면 정지 */
+    /* 접근성: 모션 줄이기 */
     @media (prefers-reduced-motion: reduce){
-      .label span{ animation:none !important; }
+      .label > span{ animation: none !important; }
     }
-  
-:root {
-  --sns-size: 48px;   /* PC 기본 크기 */
-}
-@media (max-width: 640px) {
-  :root {
-    --sns-size: 28px; /* 모바일 크기 */
-  }
-}
-
-/* SNS 그리드 레이아웃 */
-
-.sns-grid{
-  position: fixed;
-  top: calc(var(--hero) - var(--sns-size, 40px) - var(--tb-vertPad));
-  left: 12px;
-  z-index: 1100;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, var(--sns-size, 40px)));
-  grid-auto-rows: var(--sns-size, 40px);
-  gap: 8px;
-}
-@media (max-width: 640px){
-  .sns-grid{ gap: 6px; }
-}
-.sns-grid a{
-  width: var(--sns-size, 40px);
-  height: var(--sns-size, 40px);
-  display: inline-grid;
-  place-items: center;
-  overflow: hidden;
-}
-.sns-grid img{
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  max-width: var(--sns-size, 40px);
-  max-height: var(--sns-size, 40px);
-  display: block;
-}
-
-@media (max-width: 640px) {
-  
-.sns-grid{
-  position: fixed;
-  top: calc(var(--hero) - var(--sns-size, 40px) - var(--tb-vertPad));
-  left: 12px;
-  z-index: 1100;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, var(--sns-size, 40px)));
-  grid-auto-rows: var(--sns-size, 40px);
-  gap: 8px;
-}
-@media (max-width: 640px){
-  .sns-grid{ gap: 6px; }
-}
-.sns-grid a{
-  width: var(--sns-size, 40px);
-  height: var(--sns-size, 40px);
-  display: inline-grid;
-  place-items: center;
-  overflow: hidden;
-}
-.sns-grid img{
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  max-width: var(--sns-size, 40px);
-  max-height: var(--sns-size, 40px);
-  display: block;
-}
-
-}
-
-.sns-grid a {
-  width: var(--sns-size, 40px);
-  height: var(--sns-size, 40px);
-  display: inline-grid;
-  place-items: center;
-  overflow: hidden;
-}
-
-.sns-grid img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  max-width: var(--sns-size, 40px);
-  max-height: var(--sns-size, 40px);
-}
-
-@media (max-width: 640px){ :root{ --sns-size: 28px; } }
-</style>
+  </style>
 </head>
 <body>
-  <div class="grid" id="grid"></div>
+  <!-- 상단 타이틀(샘플 이미지 경로는 프로젝트에 맞게 교체) -->
+  <div class="title-fixed">
+    <div class="title-bar">
+      <div class="title-ghost"></div>
+      <img class="title-center" src="./title1.png" alt="타이틀 중앙">
+      <img class="title-right"  src="./title2.png" alt="타이틀 오른쪽">
+    </div>
+  </div>
 
+  <main class="wrap">
+    <!-- SNS -->
+    <nav aria-label="SNS" class="sns-grid">
+      <a aria-label="YouTube" href="#" target="_blank" rel="noopener"><img alt="YouTube" src="./assets/icons/SNS01.png"/></a>
+      <a aria-label="X" href="#" target="_blank" rel="noopener"><img alt="X" src="./assets/icons/SNS02.png"/></a>
+      <a aria-label="Naver Cafe" href="#" target="_blank" rel="noopener"><img alt="Naver Cafe" src="./assets/icons/SNS03.png"/></a>
+    </nav>
+
+    <!-- 썸네일 그리드 -->
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <!-- --hero를 실제 타이틀 높이로 동기화 -->
   <script>
-    // 테스트용 데이터
-    const TRACKS = [
-      {id:1, artist:"아이유", title:"아주 긴 제목 테스트용 노래 제목입니다 길어서 잘림", thumb:"https://via.placeholder.com/600x400"},
-      {id:2, artist:"방탄소년단", title:"Dynamite", thumb:"https://via.placeholder.com/600x400"},
-      {id:3, artist:"NewJeans", title:"Hype Boy (Slightly Longer Title For Demo)", thumb:"https://via.placeholder.com/600x400"},
-      {id:4, artist:"임영웅", title:"사랑은 늘 도망가 (Drama OST Live Stage Ver.)", thumb:"https://via.placeholder.com/600x400"}
-    ];
-
-    const grid = document.getElementById('grid');
-    TRACKS.forEach(item => {
-      const a = document.createElement('a');
-      a.className = 'tile';
-      a.innerHTML = `
-        <img src="\${item.thumb}" alt="\${item.artist} - \${item.title}">
-        <div class="label"><span>\${item.artist} - \${item.title}</span></div>
-      `;
-      grid.appendChild(a);
+  (function(){
+    function setHero(){
+      var t = document.querySelector('.title-fixed');
+      if(!t) return;
+      var h = t.getBoundingClientRect().height || 0;
+      document.documentElement.style.setProperty('--hero', h + 'px');
+    }
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      setTimeout(setHero, 0);
+    } else {
+      document.addEventListener('DOMContentLoaded', setHero);
+    }
+    var imgs = document.querySelectorAll('.title-fixed img');
+    imgs.forEach(function(img){ img.addEventListener('load', setHero, { once:false }); });
+    var tid;
+    window.addEventListener('resize', function(){
+      clearTimeout(tid);
+      tid = setTimeout(setHero, 100);
     });
+  })();
   </script>
 
+  <!-- 데이터 로드 (프로젝트의 tracks.js로 교체하세요) -->
+  <script>
+  // 데모 데이터
+  const TRACKS = [
+    {id:1, artist:"아이유", title:"아주 긴 제목 테스트용 노래 제목입니다 길어서 잘림", thumb:"https://via.placeholder.com/600x400"},
+    {id:2, artist:"방탄소년단", title:"Dynamite", thumb:"https://via.placeholder.com/600x400"},
+    {id:3, artist:"NewJeans", title:"Hype Boy (Slightly Longer Title For Demo)", thumb:"https://via.placeholder.com/600x400"},
+    {id:4, artist:"임영웅", title:"사랑은 늘 도망가 (Drama OST Live Stage Ver.)", thumb:"https://via.placeholder.com/600x400"}
+  ];
+  </script>
+
+  <!-- 그리드 렌더 -->
+  <script>
+  (function () {
+    const grid = document.getElementById('grid');
+    if (!grid) return;
+    try {
+      const data = (window.TRACKS && Array.isArray(window.TRACKS)) ? window.TRACKS : [];
+      if (!data.length) {
+        console.error('TRACKS 비어있음 또는 로드 실패');
+        grid.innerHTML = '<div style="padding:24px;font-weight:700;">데이터가 없습니다. assets/data/tracks.js를 확인하세요.</div>';
+        return;
+      }
+      const frag = document.createDocumentFragment();
+      data.forEach(item => {
+        const a = document.createElement('a');
+        a.className = 'tile';
+        a.href = 'javascript:void(0)'; /* 데모 */
+        a.innerHTML = `
+          <img loading="lazy" src="${item.thumb}" alt="${item.artist} - ${item.title}">
+          <div class="label"><span>${item.artist} - ${item.title}</span></div>
+        `;
+        frag.appendChild(a);
+      });
+      grid.innerHTML = '';
+      grid.appendChild(frag);
+    } catch (e) {
+      console.error(e);
+      grid.innerHTML = '<div style="padding:24px;font-weight:700;">스크립트 오류가 발생했습니다. 콘솔을 확인하세요.</div>';
+    }
+  })();
+  </script>
+
+  <!-- 라벨 무빙: PC hover시에 1회, 모바일 자동 -->
   <script>
   (function(){
     function setupMarquees(){
@@ -217,12 +229,12 @@
         const overflow = Math.max(0, Math.ceil(span.scrollWidth - label.clientWidth));
         label.style.setProperty('--scrollW', overflow + 'px');
 
-        // 거리 비례 시간 (px/초 ~= 40), 6~16초 사이 클램프
+        // 거리 비례 시간 (px/초 ~= 40), 6~16초 범위
         const seconds = Math.min(16, Math.max(6, overflow / 40 + 6));
         label.style.setProperty('--dur', seconds + 's');
 
         if(canHover){
-          // 미세한 실수 호버 방지 딜레이
+          // 실수 호버 방지 딜레이
           let hoverTid = null;
           const onEnter = () => {
             if(overflow > 0){
