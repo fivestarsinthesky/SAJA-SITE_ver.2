@@ -61,7 +61,40 @@
   }
 
   /* 모바일(<=900px) */
-  
+  @media (max-width:900px){
+    /* 페이지: 헤더 제외 화면을 채우고 하단 16px 여백 */
+    .page{
+      padding: 0 12px 16px;
+      overflow: hidden;
+      min-height: 100vh;
+    }
+
+    /* 패널: 세로 스택 + 간격 16px */
+    .pc-grid{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      flex:1 1 auto;
+      min-height:0;
+    }
+    
+
+    /* 유튜브는 고정, 오른쪽 패널은 남은 높이 */
+    .player{ flex:0 0 auto; }
+    .content.card{
+      flex:1 1 auto;
+      min-height:0;
+      margin:0;
+    }
+
+    /* 패널 내부 스크롤 */
+    .content-body{
+      padding:0;
+      overflow:auto;
+      -webkit-overflow-scrolling:touch;
+    }
+    .content-iframe{ height:100%; }
+  }
 
   /* 은은한 오버레이(옵션) */
   body::before{
@@ -159,25 +192,20 @@
   }
 
 
-.left-col{ margin-bottom:16px !important; } /* gap between left stack and right panel */
+/* === Robust mobile spacing patch (explicit margins) === */
+@media (max-width:900px){
+  /* Stack panels without relying on flex-gap */
+  .pc-grid{ display:block !important; }
+  .left-col{ margin-bottom:16px !important; } /* gap between left stack and right panel */
   .content.card{ height:auto !important; }    /* prevent overflow eating bottom padding */
   .page{ padding-bottom:16px !important; }    /* bottom breathing room */
 }
 
 
-
-/* === Mobile exact spacing spec (<=900px) — consolidated === */
+/* === Mobile exact spacing spec (<=900px) === */
 @media (max-width:900px){
-  /* Column stack without extra gaps */
+  /* Layout: column with controlled heights */
   .pc-grid{ display:flex !important; flex-direction:column !important; gap:0 !important; flex:1 1 auto; min-height:0; }
-  .player{ flex:0 0 auto !important; }                 /* YouTube panel fixed-height by aspect-ratio */
-  .left-col{ margin-bottom:12px !important; }          /* Single source of spacing between panels */
-  .content.card{ flex:1 1 auto !important; min-height:0 !important; margin:0 !important; }
-  .content-body{ padding:0 !important; height:100% !important; overflow:auto !important; -webkit-overflow-scrolling:touch; }
-  .content-iframe{ height:100% !important; }
-  .page{ padding-bottom:16px !important; }             /* bottom breathing room */
-}
-
   .player{ flex:0 0 auto !important; }                 /* YouTube panel fixed-height (by aspect-ratio) */
   .left-col{ margin-bottom:12px !important; }          /* Exact 12px gap between YT and lyrics panel */
   .content.card{ flex:1 1 auto !important; min-height:0 !important; margin:0 !important; }
@@ -196,22 +224,22 @@
 }
 
 
-/* === PC: 오른쪽 16px 고정 여백 (Option B, asymmetric gap) — consolidated === */
+/* === PC: 오른쪽 16px 고정 여백 (Option B, asymmetric gap) === */
 @media (min-width:901px){
-  /* Avoid double right padding */
+  /* 1) 페이지 오른쪽 패딩은 제거 (이중여백 방지) */
   .page{ padding-right:0 !important; }
 
-  /* Use a 4-column grid: [left] [16px spacer] [right] [16px edge gap] */
+  /* 2) 4-컬럼으로 재정의: [왼쪽] [16px간격] [오른쪽] [16px여백]  */
   .pc-grid{
     display:grid !important;
     grid-template-columns: 1fr 16px minmax(0, 40%) 16px !important;
-    column-gap: 0 !important;
-    row-gap: var(--gap) !important;
+    column-gap: 0 !important;           /* 열 간격은 0으로 두고, 16px 간격을 '열'로 직접 넣음 */
+    row-gap: var(--gap) !important;     /* 행 간격(세로)은 기존 값 유지 */
     height:100%;
     min-height:0;
   }
 
-  /* Pin items to the intended columns so auto-placement never drops them into spacer columns */
+  /* 3) 각 패널을 정확한 열에 올려놓기 (자동배치가 16px 열로 들어가지 않게) */
   .left-col{ grid-column: 1 !important; }
   .pc-grid > .content.card{ grid-column: 3 !important; }
 }
