@@ -12,7 +12,7 @@
     --accent:#111111; --accent-ink:#ffffff;
   }
   *{ box-sizing:border-box; }
-  html, body{ height:100%; background: url('bg.png') no-repeat center center; background-size: cover; }
+  html, body { height:100%; }
   body{ margin:0; font-family:system-ui,"Noto Sans KR",sans-serif; background:#fff; color:var(--ink);
         display:flex; flex-direction:column; overflow:hidden; }
 
@@ -245,20 +245,19 @@
 }
 
 
-/* === Mobile exact spacing test === */
+/* === Mobile: remove extra bottom space inside YouTube panel & fix 12px spacing === */
 @media (max-width:900px){
-  .pc-grid > .left-col{
-    margin-bottom: 0px !important;
-  }
-  .pc-grid > .content.card{
-    margin-top:0 !important;
-  }
-}
+  /* 컨테이너 간격은 0으로 초기화 (겹침 방지) */
+  .pc-grid{ display:flex !important; flex-direction:column !important; row-gap:0 !important; column-gap:0 !important; gap:0 !important; }
 
+  /* 두 패널 사이 간격의 유일한 출처: left-col 아래 12px */
+  .pc-grid > .left-col{ margin:0 0 12px 0 !important; padding-bottom:0 !important; }
 
-/* PC: 배경을 화면 가로·세로에 맞춰 꽉 채우기 (비율 무시) */
-@media (min-width:901px){
-  body{ background-size: 100% 100% !important; }
+  /* 유튜브 iframe 및 내부 여백 제거 */
+  .pc-grid > .left-col iframe{ display:block; margin:0 !important; padding:0 !important; }
+
+  /* 가사 패널의 여분 마진 제거 (합산 방지) */
+  .pc-grid > .content.card{ margin:0 !important; }
 }
 
 </style>

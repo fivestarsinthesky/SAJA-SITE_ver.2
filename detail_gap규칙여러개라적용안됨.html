@@ -12,7 +12,7 @@
     --accent:#111111; --accent-ink:#ffffff;
   }
   *{ box-sizing:border-box; }
-  html, body{ height:100%; background: url('bg.png') no-repeat center center; background-size: cover; }
+  html, body { height:100%; }
   body{ margin:0; font-family:system-ui,"Noto Sans KR",sans-serif; background:#fff; color:var(--ink);
         display:flex; flex-direction:column; overflow:hidden; }
 
@@ -64,9 +64,9 @@
   @media (max-width:900px){
     /* 페이지: 헤더 제외 화면을 채우고 하단 16px 여백 */
     .page{
-      padding: 0 12px 16px;
+      padding: 0 12px 0;
       overflow: hidden;
-      min-height: 100vh;
+      
     }
 
     /* 패널: 세로 스택 + 간격 16px */
@@ -207,7 +207,7 @@
   /* Layout: column with controlled heights */
   .pc-grid{ display:flex !important; flex-direction:column !important; gap:0 !important; flex:1 1 auto; min-height:0; }
   .player{ flex:0 0 auto !important; }                 /* YouTube panel fixed-height (by aspect-ratio) */
-  .left-col{ margin-bottom:12px !important; }          /* Exact 12px gap between YT and lyrics panel */
+  .left-col{ margin-bottom:10px !important; }          /* Exact 12px gap between YT and lyrics panel */
   .content.card{ flex:1 1 auto !important; min-height:0 !important; margin:0 !important; }
   .content-body{ padding:0 !important; height:100% !important; overflow:auto !important; -webkit-overflow-scrolling:touch; }
   .content-iframe{ height:100% !important; }
@@ -216,51 +216,70 @@
   .page{ padding-bottom:16px !important; }
 }
 
-/* === PC exact spacing spec (>=901px) === */
-@media (min-width:901px){
-  .page{
-    padding: 0 16px 16px !important; /* 좌우 16px, 하단 16px */
-  }
+
+/* === Viewport-locked layout: header + one-screen page === */
+html, body { height: 100%; }
+body{
+  margin:0;
+  height:100vh;                         /* lock to viewport */
+  display:grid;                         /* 2 rows: header + page */
+  grid-template-rows:auto 1fr;
+  overflow:hidden;                      /* no page scroll */
 }
 
+/* page occupies the 1fr slot; no page scroll */
+.page{
+  max-width:var(--maxw);
+  margin:0 auto;
+  height:auto;
+  min-height:0;                         /* stop height propagation */
+  overflow:hidden;                      /* keep all scroll inside content-body */
+  width:100%;
+  padding: 0 12px 0;                    /* side padding only; bottom padding moves inside content-body */
+}
 
-/* === PC: 오른쪽 16px 고정 여백 (Option B, asymmetric gap) === */
+/* Desktop (>=901px): two-column grid; internal scroll only */
 @media (min-width:901px){
-  /* 1) 페이지 오른쪽 패딩은 제거 (이중여백 방지) */
-  .page{ padding-right:0 !important; }
-
-  /* 2) 4-컬럼으로 재정의: [왼쪽] [16px간격] [오른쪽] [16px여백]  */
   .pc-grid{
-    display:grid !important;
-    grid-template-columns: 1fr 16px minmax(0, 40%) 16px !important;
-    column-gap: 0 !important;           /* 열 간격은 0으로 두고, 16px 간격을 '열'로 직접 넣음 */
-    row-gap: var(--gap) !important;     /* 행 간격(세로)은 기존 값 유지 */
+    display:grid;
+    gap:var(--gap);
+    grid-template-columns: var(--left) var(--right);
     height:100%;
     min-height:0;
   }
-
-  /* 3) 각 패널을 정확한 열에 올려놓기 (자동배치가 16px 열로 들어가지 않게) */
-  .left-col{ grid-column: 1 !important; }
-  .pc-grid > .content.card{ grid-column: 3 !important; }
+  .left-col{
+    display:grid;
+    gap:var(--gap);
+    grid-template-rows:auto auto;
+    min-height:0;
+  }
+  .content.card{
+    display:flex; flex-direction:column;
+    height:100%; min-height:0; overflow:hidden;
+  }
+  .content-body{
+    flex:1 1 auto; min-height:0; height:100%;
+    overflow:auto; -webkit-overflow-scrolling:touch;
+    padding: 0 0 16px;                  /* bottom breathing room lives INSIDE */
+  }
 }
 
-
-/* === Mobile exact spacing test === */
+/* Mobile (<=900px): vertical stack; 12px gap; internal scroll only */
 @media (max-width:900px){
-  .pc-grid > .left-col{
-    margin-bottom: 0px !important;
+  .pc-grid{
+    display:flex; flex-direction:column;
+    gap:0; flex:1 1 auto; min-height:0; height:100%;
   }
-  .pc-grid > .content.card{
-    margin-top:0 !important;
+  .player{ flex:0 0 auto; }
+  .left-col{ margin-bottom:10px; }      /* exact 12px between YT and lyrics */
+  .content.card{ flex:1 1 auto; min-height:0; margin:0; overflow:hidden; }
+  .content-body{
+    height:100%; min-height:0;
+    overflow:auto; -webkit-overflow-scrolling:touch;
+    padding: 0 0 16px;                  /* bottom 16px lives INSIDE */
   }
+  .content-iframe{ height:100%; }
 }
-
-
-/* PC: 배경을 화면 가로·세로에 맞춰 꽉 채우기 (비율 무시) */
-@media (min-width:901px){
-  body{ background-size: 100% 100% !important; }
-}
-
 </style>
 <!-- TRACKS 로더 -->
 <script>
@@ -295,26 +314,7 @@
     loadNext();
   })();
 </script>
-<style id="viewport-lock-strong">
-/* === FINAL: Viewport-locked layout + internal scroll (mobile clipping fix) === */
-body{
-  height:100vh; overflow:hidden;
-  display:grid; grid-template-rows:auto 1fr;
-}
-@supports (height: 100svh){ body{ height:100svh; } }
-@supports (height: 100dvh){ body{ height:100dvh; } }
-
-.page, .pc-grid, .content.card, .content-body{ min-height:0 !important; }
-
-.content.card{ display:flex; flex-direction:column; }
-.content-body{
-  flex:1 1 auto;
-  overflow:auto !important;
-  -webkit-overflow-scrolling:touch;
-  box-sizing:border-box;
-  padding:0 0 max(16px, env(safe-area-inset-bottom));
-}
-</style></head>
+</head>
 <body>
 <header>
 <a class="btn-back" href="./index.html">🏠</a>
@@ -390,24 +390,6 @@ body{
     font-display: swap;
   }
   body{font-family:'GmarketSansLight', system-ui, "Noto Sans KR", sans-serif;}
-  /* === Scrollbar Custom (iframe document): idle=transparent, hover=white, no arrows === */
-  /* Firefox default transparent */
-  * { scrollbar-width: thin; scrollbar-color: transparent transparent; }
-  /* Chromium/WebKit */
-  *::-webkit-scrollbar { width: 10px; height: 10px; }
-  *::-webkit-scrollbar-track { background: transparent; }
-  *::-webkit-scrollbar-thumb {
-    background: transparent;
-    border-radius: 8px;
-    border: 2px solid transparent;
-  }
-  /* remove up/down buttons */
-  *::-webkit-scrollbar-button { display: none; width: 0; height: 0; background: transparent; }
-  /* Show on hover only */
-  *:hover::-webkit-scrollbar-thumb { background: #ffffff; border-color: transparent; }
-  *:hover::-webkit-scrollbar-track { background: transparent; }
-  html, body { scrollbar-gutter: stable; }
-
 </style></head><body>
   <h1>${title}</h1>
   <div class="mono">${body}</div>

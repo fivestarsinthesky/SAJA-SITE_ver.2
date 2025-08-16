@@ -12,7 +12,7 @@
     --accent:#111111; --accent-ink:#ffffff;
   }
   *{ box-sizing:border-box; }
-  html, body{ height:100%; background: url('bg.png') no-repeat center center; background-size: cover; }
+  html, body { height:100%; }
   body{ margin:0; font-family:system-ui,"Noto Sans KR",sans-serif; background:#fff; color:var(--ink);
         display:flex; flex-direction:column; overflow:hidden; }
 
@@ -248,17 +248,11 @@
 /* === Mobile exact spacing test === */
 @media (max-width:900px){
   .pc-grid > .left-col{
-    margin-bottom: 0px !important;
+    margin-bottom:2px !important;
   }
   .pc-grid > .content.card{
     margin-top:0 !important;
   }
-}
-
-
-/* PC: 배경을 화면 가로·세로에 맞춰 꽉 채우기 (비율 무시) */
-@media (min-width:901px){
-  body{ background-size: 100% 100% !important; }
 }
 
 </style>
