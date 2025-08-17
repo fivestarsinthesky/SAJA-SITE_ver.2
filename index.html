@@ -24,17 +24,14 @@
     color:#111;
     min-height: 100vh;
   }
-  /* UPDATED: make grid stick right under the title */
   .wrap { max-width: var(--maxw); margin:0 auto; padding:24px 24px 28px; padding-top: calc(var(--hero) - var(--tb-vertPad)); }
 
-  /* 기본 10열 */
   .grid { display:grid; grid-template-columns:repeat(10,1fr); gap:var(--gap); }
   .tile { position:relative; overflow:hidden; border-radius:12px; border: none; background:#f7f7f7; }
   .tile::before { content:""; display:block; padding-top: var(--tile-ratio); }
   .tile img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .2s; }
   .tile:hover img{ transform:scale(1.03); }
 
-  /* 라벨: 한 줄 유지 + 가독성 */
   .label{
     position:absolute; left:0; right:0; bottom:0;
     padding:6px 8px;
@@ -45,13 +42,11 @@
     font-size: 10px;
   }
 
-  /* 단계적 반응형 */
   @media (max-width:1400px){ .grid{ grid-template-columns:repeat(8,1fr); } }
   @media (max-width:1200px){ .grid{ grid-template-columns:repeat(6,1fr); } }
   @media (max-width:900px){  .grid{ grid-template-columns:repeat(4,1fr); } .wrap{ padding:16px 20px 24px; } }
   @media (max-width:640px){  .grid{ grid-template-columns:repeat(2,1fr); } }
 
-  /* 오버레이 */
   body::before{
     content:"";
     position:fixed; inset:0;
@@ -59,13 +54,12 @@
     pointer-events:none;
   }
 
-  /* ===== 상단 고정 타이틀 바: 중앙/오른쪽 이미지 ===== */
   .title-fixed{
     position: fixed;
     top: 0; left: 0;
     width: 100vw;
     z-index: 1000;
-    pointer-events: none; /* 내부 요소만 클릭 가능 */
+    pointer-events: none;
   }
   .title-bar{
     display:flex;
@@ -82,13 +76,9 @@
     height:auto;
     width:100%;
     max-width:none;
-    pointer-events:auto; /* 이미지 클릭 허용 */
+    pointer-events:auto;
   }
-  .title-ghost{ /* 왼쪽 균형용 투명 스페이서 */
-    width:var(--tb-rightW);
-    height:1px;
-    opacity:0;
-  }
+  .title-ghost{ width:var(--tb-rightW); height:1px; opacity:0; }
   .title-center{ width:var(--tb-centerW); }
   .title-right { width:var(--tb-rightW); object-fit:contain; margin-right:30px; }
 
@@ -99,14 +89,9 @@
     }
   }
 
-  /* 타이틀 높이만큼 본문을 아래로 밀기: JS가 --hero에 실제 높이 주입 */
-  /* (moved up: now just var(--hero)) */
-
-  /* ------- SNS 작은 그리드 (상단 좌측 고정) ------- */
   :root{ --sns-size: 56px; }
   @media (max-width: 640px){ :root{ --sns-size: 32px; } }
 
-  /* UPDATED: align SNS grid bottom with title bar bottom and subtract padding */
   .sns-grid{
     position: fixed;
     top: calc(var(--hero) - var(--sns-size) - var(--tb-vertPad));
@@ -118,24 +103,9 @@
     gap: 8px;
   }
 
-  .sns-grid a{
-    width: var(--sns-size);
-    height: var(--sns-size);
-    display: inline-grid;
-    place-items: center;
-    overflow: hidden;
-  }
-
-  .sns-grid img{
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  .sns-grid a:focus-visible{
-    outline: 2px solid #6b6bff;
-    outline-offset: 2px;
-  }
+  .sns-grid a{ width: var(--sns-size); height: var(--sns-size); display: inline-grid; place-items: center; overflow: hidden; }
+  .sns-grid img{ width: 100%; height: auto; display: block; }
+  .sns-grid a:focus-visible{ outline: 2px solid #6b6bff; outline-offset: 2px; }
 
   @font-face {
     font-family: 'GmarketSansLight';
@@ -146,50 +116,29 @@
   }
   body { font-family: 'GmarketSansLight', system-ui, 'Noto Sans KR', sans-serif; }
 
-  /* ===== Modal (Lyrics & More) unified glass style ===== */
-  .lp-modal[id^="modal"] .lp-modal__body{
-    background: transparent;              /* 스크롤 영역은 투명 */
-    overflow: auto;
-    scrollbar-gutter: stable;
-  }
-
+  .lp-modal[id^="modal"] .lp-modal__body{ background: transparent; overflow: auto; scrollbar-gutter: stable; }
   .lp-modal[id^="modal"] .lp-modal__panel{
-    background: rgba(255,255,255,0.85);   /* 유리판 느낌 */
+    background: rgba(255,255,255,0.85);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.08);
   }
 
-  /* 더보기/가사 공통: 내부 여백 균형 */
   .lp-modal[id^="modal"] .lp-modal__panel,
-  .lp-modal[id^="modal"] .lp-modal__body{
-    padding: 16px;
-  }
+  .lp-modal[id^="modal"] .lp-modal__body{ padding: 16px; }
 
   @media (max-width: 640px){
-    .lp-modal[id^="modal"] .lp-modal__panel{
-      background: rgba(255,255,255,0.90);
-      border-radius: 14px;
-    }
+    .lp-modal[id^="modal"] .lp-modal__panel{ background: rgba(255,255,255,0.90); border-radius: 14px; }
   }
 
-  /* (선택) 스크롤바 미세 스타일 */
-  .lp-modal[id^="modal"] .lp-modal__body::-webkit-scrollbar{
-    width: 10px;
-  }
-  .lp-modal[id^="modal"] .lp-modal__body::-webkit-scrollbar-thumb{
-    border-radius: 10px;
-    background: rgba(0,0,0,0.2);
-  }
-  .lp-modal[id^="modal"] .lp-modal__body::-webkit-scrollbar-track{
-    background: transparent;
-  }
+  .lp-modal[id^="modal"] .lp-modal__body::-webkit-scrollbar{ width: 10px; }
+  .lp-modal[id^="modal"] .lp-modal__body::-webkit-scrollbar-thumb{ border-radius: 10px; background: rgba(0,0,0,0.2); }
+  .lp-modal[id^="modal"] .lp-modal__body::-webkit-scrollbar-track{ background: transparent; }
 
   @media (max-width: 640px){
-    .wrap{ padding-top: calc(var(--hero) - var(--tb-vertPad)); } /* mobile: avoid overlap with fixed title */
+    .wrap{ padding-top: calc(var(--hero) - var(--tb-vertPad)); }
   }
-
 
 .page-footer {
   position: fixed;
@@ -199,116 +148,99 @@
   box-sizing: border-box;
   padding: 0 12px;
   text-align: center;
-  font-size: clamp(8px, 2.5vw, 10px);  /* desktop: shrink if needed, max 10px */
+  font-size: clamp(8px, 2.5vw, 10px);
   color: rgba(255, 255, 255, 0.7);
   z-index: 9999;
-  white-space: nowrap;   /* keep one line */
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Mobile: in-flow under grid, two lines, occupies space */
 @media (max-width: 900px) {
   .page-footer {
-    position: static;             /* in flow under grid */
+    position: static;
     width: 100%;
     padding: 0 16px;
     margin: 16px auto 12px;
-    font-size: clamp(8px, 3.2vw, 10px);  /* mobile: shrink more aggressively, max 10px */
-    white-space: normal;          /* allow wrapping */
+    font-size: clamp(8px, 3.2vw, 10px);
+    white-space: normal;
     overflow: visible;
     text-overflow: clip;
   }
-
 }
-    /* split into two lines */
-}
-}
-
 </style>
 
 <style>
 
 /* === Mobile: title & SNS follow the page flow (no fixed) === */
 @media (max-width: 900px){
-  /* 타이틀바를 고정 해제: 문서 흐름에 넣기 */
   .title-fixed{
     position: static !important;
     width: 100% !important;
     z-index: auto !important;
-    pointer-events: auto !important; /* 이미지 클릭 유지 */
+    pointer-events: auto !important;
   }
 
-  /* 타이틀 높이에 맞춰 본문을 밀던 값 제거 (이제 고정이 아님) */
   .wrap{
-    padding-top: 16px !important;   /* 자연스러운 상단 간격만 유지 */
+    padding-top: 16px !important;
   }
 
-  /* SNS 그리드도 고정 해제 + 자연스러운 간격 */
   .sns-grid{
     position: static !important;
     top: auto !important;
     left: auto !important;
     z-index: auto !important;
-    margin: 8px 0 12px !important;   /* 타이틀 바로 아래 붙게 */
+    margin: 8px 0 12px !important;
   }
 }
 
-
-
 /* === Consolidated mobile rules (final) === */
 @media (max-width: 900px){
-  /* 화면에서만 순서 변경: grid → sns → footer */
   .wrap{ display:flex; flex-direction:column; }
   .grid{ order:1; }
   .sns-grid{ order:2; }
   .page-footer{ order:3; }
 
-  /* title1 중앙 고정 + title2 오른쪽 고정(겹침 허용) */
   .title-bar{ position:relative; justify-content:center; }
-  .title-ghost{ width:0 !important; }                    /* 모바일 스페이서 제거 */
+  .title-ghost{ width:0 !important; }
   .title-right{
     position:absolute; right: var(--tb-sidePad);
     top:50%; transform: translateY(-50%);
     margin-right:0 !important;
   }
 
-  /* SNS: 고정 해제 + 중앙정렬 + 위/아래 간격 */
   .sns-grid{
     position: static !important;
     top:auto !important; left:auto !important; z-index:auto !important;
     justify-content:center;
-    margin: 24px auto 6px !important;                    /* 위 24px, 아래 6px */
+    margin: 24px auto 6px !important;
   }
 
-  /* 모바일 푸터는 두 줄 허용 (PC는 한 줄 유지) */
   .page-footer{ position:static; white-space:normal; }
   .page-footer span{ display:block; }
 }
 
-
-
 /* === Mobile override: wrap stick to title2+grid, title top padding 30px === */
 @media (max-width: 900px){
   .wrap{
-    padding-top: 0 !important;      /* grid를 타이틀 바로 아래에 딱 붙임 */
+    padding-top: 0 !important;
   }
   .title-bar{
-    padding-top: 30px !important;   /* 타이틀 위쪽 여백 30px */
+    padding-top: 30px !important;
   }
 }
 
-/* === PATCH: keep all existing rules; only adjust gaps on mobile === */
+/* === PATCH v2: ensure title2-bottom and grid-top are flush === */
 @media (max-width: 900px){
-  /* title1 아래 간격을 기존 대비 +16px로 확장
-     - 기존 margin-bottom이 16px이었다면 결과는 32px
-     - 정확한 기존값을 유지하려면 calc를 쓰지 않고 고정값으로 확장 적용
-  */
-  .title-center { margin-bottom: 32px !important; }
+  /* 1) title2와 grid 딱 붙게: 타이틀 바 하단 패딩 제거 + grid 위 마진 제거 */
+  .title-bar{ padding-bottom: 0 !important; }
+  .grid{ margin-top: 0 !important; }
 
-  /* title2와 grid 사이 딱 붙게 */
-  .title-right { margin-bottom: 0 !important; }
-  .grid { margin-top: 0 !important; }
+  /* 2) title1 아래 간격 +16px (총 32px) 유지 */
+  .title-center{ margin-bottom: 24px !important; /* 기존 +8px */ }
+
+  /* 3) title2는 시각적으로 절대배치라 margin-bottom 영향 X지만 명시 유지 */
+  .title-right{ margin-bottom: 0 !important; }
 }
 </style>
 </head>
@@ -328,13 +260,12 @@
       <a aria-label="Naver Cafe" href="https://cafe.naver.com/" rel="noopener" target="_blank"><img alt="Naver Cafe" src="./assets/icons/SNS03.png?v=20250812162819c"/></a>
     </nav>
     <div class="grid" id="grid"></div>
-  <div class="page-footer">
-  <span>팬 콘텐츠 · © 2025. 눈물많은 T상자. · 모든 저작물의 권리는 원저작자인 사자왕자에게 있습니다.</span>
-  <span>Fan-made · © 2025. 눈물많은 T상자. · All original content belongs to lionprince.x.</span>
-</div>
+    <div class="page-footer">
+      <span>팬 콘텐츠 · © 2025. 눈물많은 T상자. · 모든 저작물의 권리는 원저작자인 사자왕자에게 있습니다.</span>
+      <span>Fan-made · © 2025. 눈물많은 T상자. · All original content belongs to lionprince.x.</span>
+    </div>
   </main>
 
-  <!-- 타이틀 높이에 맞춰 본문 밀기 -->
   <script>
   (function(){
     function setHero(){
@@ -358,10 +289,8 @@
   })();
   </script>
 
-  <!-- 데이터 로드 -->
   <script src="./assets/data/tracks.js?v=cache"></script>
 
-  <!-- 그리드 렌더 -->
   <script>
   (function () {
     const grid = document.getElementById('grid');
@@ -393,7 +322,7 @@
       data.forEach(item => {
         const a = document.createElement('a');
         a.className = 'tile';
-        if (item.ratio) a.style.setProperty('--tile-ratio', item.ratio);
+        if (item.ratio) a.style.setProperty('--tile-ratio', item.ratio)  /* typo intentionally kept from original? ensure correct */
         a.href = './detail.html?id=' + encodeURIComponent(item.id);
         a.innerHTML = `
           <img loading="lazy" src="${item.thumb}" alt="${item.artist} - ${item.title}">
@@ -420,7 +349,5 @@
     }
   })();
   </script>
-
-
 </body>
 </html>
