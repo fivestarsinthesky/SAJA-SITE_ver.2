@@ -168,6 +168,23 @@
     text-overflow: clip;
   }
 }
+
+/* === FINAL PATCH: title1/2 and grid spacing === */
+@media (min-width: 901px){
+  /* PC: title1 below spacing 24px, title2 flush with grid */
+  .title-bar{ padding-bottom: 0 !important; }
+  .grid{ margin-top: 0 !important; }
+  .title-center{ padding-bottom: 24px !important; }
+  .title-right{ margin-bottom: 0 !important; }
+}
+@media (max-width: 900px){
+  /* Mobile: title1 below spacing 24px, title2 flush with grid */
+  .title-bar{ padding-bottom: 0 !important; }
+  .grid{ margin-top: 0 !important; }
+  .title-center{ padding-bottom: 24px !important; }
+  .title-right{ margin-bottom: 0 !important; }
+}
+
 </style>
 
 <style>
