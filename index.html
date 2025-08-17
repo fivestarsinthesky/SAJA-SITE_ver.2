@@ -231,6 +231,9 @@
 
 /* === Mobile: title & SNS follow the page flow (no fixed) === */
 @media (max-width: 900px){
+  /* mobile: 중앙정렬 방해 요소 제거 */
+  .title-ghost{ width: 0 !important; }  /* 데스크톱 균형용 스페이서를 모바일에선 제거 */
+
   /* title1 중앙 고정 + title2 오른쪽 끝(겹침 허용) */
   .title-bar { 
     position: relative; 
