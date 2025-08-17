@@ -376,78 +376,21 @@
 </style>
 
 <style>
-/* === TITLE 전체 보정: 모바일/태블릿(<=1024px)에서 붙임/정렬/흐름 재정의 === */
+/* === PATCH: 모바일에서 title2+grid만 20px 내려주기 === */
 @media (max-width: 1024px){
-  /* 0) 타이틀을 문서 흐름으로 넣고, 본문은 컬럼 흐름 */
-  .title-fixed{
-    position: static !important;
-    width: 100% !important;
-    z-index: auto !important;
-    pointer-events: auto !important;
-  }
-  .wrap{
-    display: flex;
-    flex-direction: column;
-    padding-top: 0 !important;
-  }
-  .grid{ order: 1; margin-top: 0 !important; }
-  .sns-grid{
-    order: 2;
-    position: static !important;
-    justify-content: center;
-    margin: 24px auto 6px !important;
-    top: auto !important;
-    left: auto !important;
-    z-index: auto !important;
-  }
-  .page-footer{
-    order: 3;
-    position: static;
-    width: 100%;
-    padding: 0 16px;
-    margin: 16px auto 12px;
-    font-size: clamp(8px, 3.2vw, 10px);
-    white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
-  }
-  .page-footer span{ display:block; }
+  :root { --pair-offset: 20px; }
 
-  /* 1) 타이틀 바: 위 30px 유지, 아래는 0.  
-        - margin-bottom:-16px으로 그리드를 16px 끌어올리고
-        - 가운데 타이틀에만 16px padding-bottom을 줘서 비대칭 간격(title1=16px, title2=0px) 구현 */
   .title-bar{
-    position: relative;
-    justify-content: center !important;
-    padding-top: 30px !important;
     padding-bottom: 0 !important;
-    margin-bottom: -16px !important; /* 오른쪽(title2) 기준으로 그리드 딱 붙게 */
+    margin-bottom: var(--pair-offset) !important;
   }
-  .title-ghost{ width: 0 !important; }
 
-  /* 2) 가운데 타이틀: 진짜 중앙 정렬 + 16px 간격 복구 */
   .title-center{
-    display: block !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    margin-bottom: 0 !important;
-    padding-bottom: 16px !important; /* title1 ↔ grid 간격(원하는 값으로 조정 가능) */
+    padding-bottom: 16px !important;
+    margin-bottom: calc(-1 * var(--pair-offset)) !important;
   }
 
-  /* 3) 오른쪽 타이틀: 절대배치 유지(시각 기준선 고정), 마진으로 간격 만들지 않음 */
-  .title-right{
-    position: absolute !important;
-    right: var(--tb-sidePad);
-    top: 50%;
-    transform: translateY(-50%);
-    margin: 0 !important;
-  }
-}
-
-/* === 데스크톱(>=1025px) 보정 유지: 타이틀 고정 + 성공 공식 유지 === */
-@media (min-width: 1025px){
-  .wrap{ padding-top: calc(var(--hero) - var(--tb-vertPad)) !important; }
-  .grid{ margin-top: 0 !important; }
+  .title-right{ margin-bottom: 0 !important; }
 }
 </style>
 
