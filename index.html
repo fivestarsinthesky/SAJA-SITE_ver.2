@@ -231,6 +231,22 @@
 
 /* === Mobile: title & SNS follow the page flow (no fixed) === */
 @media (max-width: 900px){
+  /* title1 중앙 고정 + title2 오른쪽 끝(겹침 허용) */
+  .title-bar { 
+    position: relative; 
+    justify-content: center; 
+  }
+  .title-center { 
+    margin: 0 auto; 
+  }
+  .title-right { 
+    position: absolute; 
+    right: var(--tb-sidePad); 
+    top: 50%; 
+    transform: translateY(-50%); 
+    margin-right: 0 !important;
+  }
+
   /* 타이틀바를 고정 해제: 문서 흐름에 넣기 */
   .title-fixed{
     position: static !important;
