@@ -344,41 +344,6 @@ body{
   box-sizing:border-box;
   padding:0 0 max(16px, env(safe-area-inset-bottom));
 }
-</style><style>
-/* === PATCH: Header hard-cap (1줄 ellipsis 보장, 버튼 3개 고정) === */
-header{
-  position: relative;
-  overflow: hidden; /* 헤더 자체 가로 스크롤 방지 */
-}
-header .actions{
-  position: absolute;
-  right: 16px;            /* 기존 header padding과 맞춰 조정 */
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  gap: 6px;
-  flex-wrap: nowrap;
-  z-index: 2;
-}
-#hdrTitle{
-  padding-right: 120px;   /* 우측 버튼 총폭 + 여유 (환경 따라 조정 가능) */
-  min-width: 0;           /* 재확인: 수축 허용 */
-}
-#hdrTitle .title-text{
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-@media (max-width: 360px){
-  #hdrTitle{ padding-right: 108px; } /* 아주 좁은 폭에서 미세 조정 */
-}
-
-/* 선택: 우측 페이드 아웃으로 시각 품질 향상 */
-#hdrTitle .title-text{
-  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 92%, transparent 100%);
-          mask-image: linear-gradient(to right, #000 0%, #000 92%, transparent 100%);
-}
 </style></head>
 <body>
 <header>
@@ -444,15 +409,11 @@ header .actions{
     return `<!doctype html><html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <style>
   html,body{height:100%} body{margin:0;padding:20px;background:#181818;color:#fff;font-family:system-ui,"Noto Sans KR",sans-serif;line-height:1.55;font-size:16px;overflow:auto;-webkit-overflow-scrolling:touch}
-/* PC 전용 여백 */
-@media (min-width:901px){
-  body{ padding:24px 24px 28px 24px; }
-}
 h1{font-size:18px;margin:0 0 10px 0}
 /* PC 전용 */
 @media (min-width:901px){
-  body{ font-size:24px; } /* 본문 */
-  h1{ font-size:26px; }   /* 제목 */
+  body{ font-size:20px; } /* 본문 */
+  h1{ font-size:22px; }   /* 제목 */
 }
   h1{font-size:18px;margin:0 0 10px 0}
   .mono{white-space:pre-wrap;word-break:keep-all}

@@ -263,7 +263,7 @@
     height: auto !important;       /* 내용 길면 더 늘어남 */
   }
   body {
-    background: url('bg.png') no-repeat center center !important;
+    background: url('/assets/bg.png') no-repeat center center !important;
     background-size: 100% 100% !important; /* 비율 무시하고 가로·세로 꽉 채움 */
   }
 }
@@ -274,7 +274,7 @@
 @media (max-width:900px){
   html{ background: none !important; }
   body{
-    background: url('bg.png') no-repeat center center !important;
+    background: url('/assets/bg.png') no-repeat center center !important;
     background-size: cover !important;               /* 비율 유지, 자연스러운 늘어남 */
     min-height: 100svh !important;                   /* 모바일 주소창/노치 대응 */
   }
@@ -283,7 +283,7 @@
 /* PC: 화면 기준으로 항상 꽉 차게 (비율 무시 100% 100%) */
 @media (min-width:901px){
   html{
-    background: url('bg.png') no-repeat center center fixed !important;
+    background: url('/assets/bg.png') no-repeat center center fixed !important;
     background-size: 100% 100% !important;           /* 가로·세로 꽉 채움 */
   }
   /* 본문/오버레이가 배경을 가리지 않도록 투명 처리 */
@@ -343,41 +343,6 @@ body{
   -webkit-overflow-scrolling:touch;
   box-sizing:border-box;
   padding:0 0 max(16px, env(safe-area-inset-bottom));
-}
-</style><style>
-/* === PATCH: Header hard-cap (1줄 ellipsis 보장, 버튼 3개 고정) === */
-header{
-  position: relative;
-  overflow: hidden; /* 헤더 자체 가로 스크롤 방지 */
-}
-header .actions{
-  position: absolute;
-  right: 16px;            /* 기존 header padding과 맞춰 조정 */
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  gap: 6px;
-  flex-wrap: nowrap;
-  z-index: 2;
-}
-#hdrTitle{
-  padding-right: 120px;   /* 우측 버튼 총폭 + 여유 (환경 따라 조정 가능) */
-  min-width: 0;           /* 재확인: 수축 허용 */
-}
-#hdrTitle .title-text{
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-@media (max-width: 360px){
-  #hdrTitle{ padding-right: 108px; } /* 아주 좁은 폭에서 미세 조정 */
-}
-
-/* 선택: 우측 페이드 아웃으로 시각 품질 향상 */
-#hdrTitle .title-text{
-  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 92%, transparent 100%);
-          mask-image: linear-gradient(to right, #000 0%, #000 92%, transparent 100%);
 }
 </style></head>
 <body>

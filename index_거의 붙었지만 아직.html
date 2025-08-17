@@ -20,11 +20,12 @@
   body {
     margin:0;
     font-family: system-ui, "Noto Sans KR", sans-serif;
-    background: #fff url('./assets/bg.png?v=20250812162819') no-repeat center center fixed; background-size: 100% 100%;
+    background: #fff url('./assets/poster.jpeg') no-repeat center center fixed; background-size: 100% 100%;
     color:#111;
     min-height: 100vh;
   }
-  .wrap { max-width: var(--maxw); margin:0 auto; padding:24px 24px 28px; padding-top: calc(max(var(--hero), 80px) * 1.8 + 8px); }
+  /* UPDATED: make grid stick right under the title */
+  .wrap { max-width: var(--maxw); margin:0 auto; padding:24px 24px 28px; padding-top: calc(var(--hero) - var(--tb-vertPad)); }
 
   /* 기본 10열 */
   .grid { display:grid; grid-template-columns:repeat(10,1fr); gap:var(--gap); }
@@ -41,7 +42,7 @@
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     font-weight:700;
     line-height:1.1;
-    font-size:14px;
+    font-size: 10px;
   }
 
   /* 단계적 반응형 */
@@ -99,15 +100,16 @@
   }
 
   /* 타이틀 높이만큼 본문을 아래로 밀기: JS가 --hero에 실제 높이 주입 */
-  .wrap{ padding-top: calc(max(var(--hero), 80px) * 1.8 + 8px); }
+  /* (moved up: now just var(--hero)) */
 
   /* ------- SNS 작은 그리드 (상단 좌측 고정) ------- */
   :root{ --sns-size: 56px; }
-  @media (max-width: 640px){ :root{ --sns-size: 48px; } }
+  @media (max-width: 640px){ :root{ --sns-size: 32px; } }
 
+  /* UPDATED: align SNS grid bottom with title bar bottom and subtract padding */
   .sns-grid{
     position: fixed;
-    top: calc(var(--hero) - var(--tb-vertPad));
+    top: calc(var(--hero) - var(--sns-size) - var(--tb-vertPad));
     left: 12px;
     z-index: 1100;
     display: grid;
@@ -183,6 +185,245 @@
   .lp-modal[id^="modal"] .lp-modal__body::-webkit-scrollbar-track{
     background: transparent;
   }
+
+  @media (max-width: 640px){
+    .wrap{ padding-top: calc(var(--hero) - var(--tb-vertPad)); } /* mobile: avoid overlap with fixed title */
+  }
+
+
+.page-footer {
+  position: fixed;
+  left: 0;
+  bottom: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 12px;
+  text-align: center;
+  font-size: clamp(8px, 2.5vw, 10px);  /* desktop: shrink if needed, max 10px */
+  color: rgba(255, 255, 255, 0.7);
+  z-index: 9999;
+  white-space: nowrap;   /* keep one line */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mobile: in-flow under grid, two lines, occupies space */
+@media (max-width: 900px) {
+  .page-footer {
+    position: static;             /* in flow under grid */
+    width: 100%;
+    padding: 0 16px;
+    margin: 16px auto 12px;
+    font-size: clamp(8px, 3.2vw, 10px);  /* mobile: shrink more aggressively, max 10px */
+    white-space: normal;          /* allow wrapping */
+    overflow: visible;
+    text-overflow: clip;
+  }
+  
+}
+    /* split into two lines */
+}
+}
+
+
+/* === PATCH: Mobile/Tablet (<=1024px) fix SNS position, Title1 centering, Title2-grid 0px === */
+@media (max-width: 1024px){
+  /* Flow: title enters normal flow; column layout */
+  .title-fixed{
+    position: static !important;
+    width: 100% !important;
+    z-index: auto !important;
+    pointer-events: auto !important;
+  }
+  .wrap{
+    display: flex;
+    flex-direction: column;
+    padding-top: 0 !important;
+  }
+  .grid{ order: 1; }
+  .sns-grid{ order: 2; }
+  .page-footer{ order: 3; }
+
+  /* Title bar and images */
+  .title-bar{
+    position: relative;
+    justify-content: center !important;
+    padding-top: 30px !important;
+    padding-bottom: 0 !important; /* critical: make title2 flush with grid */
+  }
+  .title-ghost{ width: 0 !important; }
+  .title-right{
+    position: absolute !important;
+    right: var(--tb-sidePad);
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0 !important;
+  }
+  .title-center{
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important; /* force real centering */
+    margin-bottom: 0 !important;
+    padding-bottom: 16px !important; /* title1 ↔ grid spacing (keep 16px) */
+  }
+
+  /* SNS grid should not float at the top on mobile */
+  .sns-grid{
+    position: static !important;
+    justify-content: center;
+    margin: 24px auto 6px !important;
+    top: auto !important;
+    left: auto !important;
+    z-index: auto !important;
+  }
+
+  /* Footer readable on mobile/tablet */
+  .page-footer{
+    position: static;
+    width: 100%;
+    padding: 0 16px;
+    margin: 16px auto 12px;
+    font-size: clamp(8px, 3.2vw, 10px);
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+  .page-footer span{ display:block; }
+}
+
+/* === Reinforce Desktop (>=1025px) semantics (leave success behavior intact) === */
+@media (min-width: 1025px){
+  .title-bar{ justify-content: space-between; }
+  .title-ghost{ width: var(--tb-rightW); }
+  /* Keep the success formula for sticking the grid right under the fixed title */
+  .wrap{ padding-top: calc(var(--hero) - var(--tb-vertPad)) !important; }
+  .grid{ margin-top: 0 !important; }
+}
+
+</style>
+
+<style>
+
+/* === Mobile: title & SNS follow the page flow (no fixed) === */
+@media (max-width: 900px){
+  /* 타이틀바를 고정 해제: 문서 흐름에 넣기 */
+  .title-fixed{
+    position: static !important;
+    width: 100% !important;
+    z-index: auto !important;
+    pointer-events: auto !important; /* 이미지 클릭 유지 */
+  }
+
+  /* 타이틀 높이에 맞춰 본문을 밀던 값 제거 (이제 고정이 아님) */
+  .wrap{
+    padding-top: 16px !important;   /* 자연스러운 상단 간격만 유지 */
+  }
+
+  /* SNS 그리드도 고정 해제 + 자연스러운 간격 */
+  .sns-grid{
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    z-index: auto !important;
+    margin: 8px 0 12px !important;   /* 타이틀 바로 아래 붙게 */
+  }
+}
+
+
+
+/* === Consolidated mobile rules (final) === */
+@media (max-width: 900px){
+  /* 화면에서만 순서 변경: grid → sns → footer */
+  .wrap{ display:flex; flex-direction:column; }
+  .grid{ order:1; }
+  .sns-grid{ order:2; }
+  .page-footer{ order:3; }
+
+  /* title1 중앙 고정 + title2 오른쪽 고정(겹침 허용) */
+  .title-bar{ position:relative; justify-content:center; }
+  .title-ghost{ width:0 !important; }                    /* 모바일 스페이서 제거 */
+  .title-right{
+    position:absolute; right: var(--tb-sidePad);
+    top:50%; transform: translateY(-50%);
+    margin-right:0 !important;
+  }
+
+  /* SNS: 고정 해제 + 중앙정렬 + 위/아래 간격 */
+  .sns-grid{
+    position: static !important;
+    top:auto !important; left:auto !important; z-index:auto !important;
+    justify-content:center;
+    margin: 24px auto 6px !important;                    /* 위 24px, 아래 6px */
+  }
+
+  /* 모바일 푸터는 두 줄 허용 (PC는 한 줄 유지) */
+  .page-footer{ position:static; white-space:normal; }
+  .page-footer span{ display:block; }
+}
+
+
+
+/* === Mobile override: wrap stick to title2+grid, title top padding 30px === */
+@media (max-width: 900px){
+  .wrap{
+    padding-top: 0 !important;      /* grid를 타이틀 바로 아래에 딱 붙임 */
+  }
+  .title-bar{
+    padding-top: 30px !important;   /* 타이틀 위쪽 여백 30px */
+  }
+}
+
+</style>
+
+<style>
+/* === PATCH: 모바일에서 title2+grid만 20px 내려주기 === */
+@media (max-width: 1024px){
+  :root { --pair-offset: 20px; }
+
+  .title-bar{
+    padding-bottom: 0 !important;
+    margin-bottom: var(--pair-offset) !important;
+  }
+
+  .title-center{
+    padding-bottom: 16px !important;
+    margin-bottom: calc(-1 * var(--pair-offset)) !important;
+  }
+
+  .title-right{ margin-bottom: 0 !important; }
+}
+</style>
+
+
+<style>
+
+/* === FINAL PATCH: 모바일에서 title2 + grid만 20px 같이 내리기 === */
+@media (max-width: 1024px){
+  :root { --pair-offset: 20px; }  /* 원하는 하강량 */
+
+  /* 1) 컨테이너 기준점 자체를 내림 → 절대배치된 title2도 함께 내려감 */
+  .title-bar{
+    padding-top: calc(30px + var(--pair-offset)) !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* 2) title1은 시각적으로 원래 위치 유지: 위로 당겨서 상쇄 */
+  .title-center{
+    transform: translateY(calc(-1 * var(--pair-offset))) !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 16px !important;
+  }
+
+  /* 3) title2는 가운데 정렬식을 유지하되, offset만큼 더 내려오기 */
+  .title-right{
+    transform: translateY(calc(-50% + var(--pair-offset))) !important;
+    margin: 0 !important;
+    top: 50% !important;
+    right: var(--tb-sidePad) !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -195,12 +436,16 @@
   </div>
 
   <main class="wrap">
-    <nav aria-label="SNS 링크" class="sns-grid" style="margin-bottom:8px;">
+    <nav aria-label="SNS 링크" class="sns-grid">
       <a aria-label="YouTube" href="https://www.youtube.com/@lionprince.x" rel="noopener" target="_blank"><img alt="YouTube" src="./assets/icons/SNS01.png?v=20250812162819a"/></a>
       <a aria-label="X" href="https://x.com/" rel="noopener" target="_blank"><img alt="X" src="./assets/icons/SNS02.png?v=20250812162819b"/></a>
       <a aria-label="Naver Cafe" href="https://cafe.naver.com/" rel="noopener" target="_blank"><img alt="Naver Cafe" src="./assets/icons/SNS03.png?v=20250812162819c"/></a>
     </nav>
     <div class="grid" id="grid"></div>
+  <div class="page-footer">
+  <span>팬 콘텐츠 · © 2025. 눈물많은 T상자. · 모든 저작물의 권리는 원저작자인 사자왕자에게 있습니다.</span>
+  <span>Fan-made · © 2025. 눈물많은 T상자. · All original content belongs to lionprince.x.</span>
+</div>
   </main>
 
   <!-- 타이틀 높이에 맞춰 본문 밀기 -->
@@ -289,5 +534,7 @@
     }
   })();
   </script>
+
+
 </body>
 </html>
