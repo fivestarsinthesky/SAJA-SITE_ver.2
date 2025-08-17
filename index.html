@@ -425,6 +425,26 @@
 }
 
 </style>
+
+/* === MIN SIZE REINSTATE: title1/title2 explicit mins (mobile & desktop) === */
+<style>
+:root{
+  --title1-min: 210px; /* mobile default */
+  --title2-min: 100px; /* mobile default */
+}
+@media (min-width:1025px){
+  :root{
+    --title1-min: 210px; /* desktop default */
+    --title2-min: 100px; /* desktop default */
+  }
+}
+.title-center{ min-width: var(--title1-min) !important; }
+.title-right { min-width: var(--title2-min)  !important; }
+/* height is auto by design; set min-height only if needed:
+.title-center, .title-right { min-height: 48px; }
+*/
+</style>
+
 </head>
 <body>
   <div class="title-fixed">
@@ -535,6 +555,44 @@
   })();
   </script>
 
+
+
+<script>
+(function(){
+  var mq = window.matchMedia('(max-width:1024px)');
+  function apply(){
+    if(!mq.matches) return;
+    document.documentElement.style.setProperty('--pair-offset','20px');
+    var bar = document.querySelector('.title-bar');
+    if(bar){
+      var comp = getComputedStyle(bar);
+      var pt = comp.paddingTop || '30px';
+      bar.style.setProperty('padding-top', 'calc(' + pt + ' + var(--pair-offset))', 'important');
+      bar.style.setProperty('margin-bottom', '0', 'important');
+      bar.style.setProperty('padding-bottom', '0', 'important');
+    }
+    var c = document.querySelector('.title-center');
+    if(c){
+      c.style.setProperty('transform', 'translateY(calc(-1 * var(--pair-offset)))', 'important');
+      c.style.setProperty('margin-bottom', '0', 'important');
+      c.style.setProperty('padding-bottom', '16px', 'important');
+    }
+    var r = document.querySelector('.title-right');
+    if(r){
+      /* top + translateY(-50%) 조합으로 가운데 유지하면서 20px 하강 */
+      r.style.setProperty('top', 'calc(50% + var(--pair-offset))', 'important');
+      r.style.setProperty('transform', 'translateY(-50%)', 'important');
+      r.style.setProperty('margin', '0', 'important');
+      r.style.setProperty('right', 'var(--tb-sidePad)', 'important');
+    }
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', apply);
+  } else {
+    apply();
+  }
+})();
+</script>
 
 </body>
 </html>
