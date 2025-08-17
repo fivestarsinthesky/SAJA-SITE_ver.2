@@ -394,6 +394,37 @@
 }
 </style>
 
+
+<style>
+
+/* === FINAL PATCH: 모바일에서 title2 + grid만 20px 같이 내리기 === */
+@media (max-width: 1024px){
+  :root { --pair-offset: 20px; }  /* 원하는 하강량 */
+
+  /* 1) 컨테이너 기준점 자체를 내림 → 절대배치된 title2도 함께 내려감 */
+  .title-bar{
+    padding-top: calc(30px + var(--pair-offset)) !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* 2) title1은 시각적으로 원래 위치 유지: 위로 당겨서 상쇄 */
+  .title-center{
+    transform: translateY(calc(-1 * var(--pair-offset))) !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 16px !important;
+  }
+
+  /* 3) title2는 가운데 정렬식을 유지하되, offset만큼 더 내려오기 */
+  .title-right{
+    transform: translateY(calc(-50% + var(--pair-offset))) !important;
+    margin: 0 !important;
+    top: 50% !important;
+    right: var(--tb-sidePad) !important;
+  }
+}
+
+</style>
 </head>
 <body>
   <div class="title-fixed">
