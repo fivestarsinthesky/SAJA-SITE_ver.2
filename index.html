@@ -231,6 +231,12 @@
 
 /* === Mobile: title & SNS follow the page flow (no fixed) === */
 @media (max-width: 900px){
+  /* 모바일에서 sns 그리드를 썸네일 그리드 아래로 이동 (시각적 순서만 변경) */
+  .wrap{ display:flex; flex-direction:column; }
+  .grid{ order:1; }
+  .sns-grid{ order:2; margin:12px 0 12px !important; }
+  .page-footer{ order:3; }
+
   /* mobile: 중앙정렬 방해 요소 제거 */
   .title-ghost{ width: 0 !important; }  /* 데스크톱 균형용 스페이서를 모바일에선 제거 */
 
