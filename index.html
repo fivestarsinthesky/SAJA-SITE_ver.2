@@ -245,12 +245,16 @@
   }
 
   /* SNS 그리드도 고정 해제 + 자연스러운 간격 */
+  .title-right {
+    margin-right: 0 !important;   /* 모바일만 오른쪽 여백 제거 (sidePad 최소 12px 유지) */
+  }
+
   .sns-grid{
     position: static !important;
     top: auto !important;
     left: auto !important;
     z-index: auto !important;
-    margin: 0 0 12px !important;   /* (수정됨) 위 여백 제거 */   /* 타이틀 바로 아래 붙게 */
+    margin: 8px 0 12px !important;   /* 타이틀 바로 아래 붙게 */
   }
 }
 
