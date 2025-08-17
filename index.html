@@ -248,7 +248,7 @@
   .title-bar{
     position: relative;
     justify-content: center !important;
-    padding-top: 20px !important;
+    padding-top: 30px !important;
     padding-bottom: 0 !important; /* critical: make title2 flush with grid */
   }
   .title-ghost{ width: 0 !important; }
@@ -368,10 +368,7 @@
   .wrap{
     padding-top: 0 !important;      /* grid를 타이틀 바로 아래에 딱 붙임 */
   }
-  .title-bar{
-    padding-top: 30px !important;   /* 타이틀 위쪽 여백 30px */
   }
-}
 
 </style>
 
@@ -426,6 +423,7 @@
 
 </style>
 
+/* === MIN SIZE REINSTATE: title1/title2 explicit mins (mobile & desktop) === */
 <style>
 :root{
   --title1-min: 210px; /* mobile default */
