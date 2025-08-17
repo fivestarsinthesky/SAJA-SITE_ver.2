@@ -5,7 +5,6 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>사자왕자의 노래방 | 포스터 그리드</title>
 <style>
-
   :root { --gap: 8px; --tile-ratio: 56.25%; --maxw: 1600px; --hero: clamp(46px, 10.6vw, 173px); }
 
   /* ====== Title Bar sizing variables ====== */
@@ -227,10 +226,9 @@
 }
 
 
-
-/* === Mobile (<=900px): slim, essential rules only === */
-@media (max-width: 900px){
-  /* 1) Title unfix & column flow */
+/* === PATCH: Mobile/Tablet (<=1024px) fix SNS position, Title1 centering, Title2-grid 0px === */
+@media (max-width: 1024px){
+  /* Flow: title enters normal flow; column layout */
   .title-fixed{
     position: static !important;
     width: 100% !important;
@@ -240,41 +238,46 @@
   .wrap{
     display: flex;
     flex-direction: column;
-    padding-top: 0 !important; /* title enters normal flow */
+    padding-top: 0 !important;
   }
-  .grid{ order:1; }
-  .sns-grid{ order:2; }
-  .page-footer{ order:3; }
+  .grid{ order: 1; }
+  .sns-grid{ order: 2; }
+  .page-footer{ order: 3; }
 
-  /* 2) Title bar layout (center + right) */
+  /* Title bar and images */
   .title-bar{
     position: relative;
-    justify-content: center;
-    padding-top: 30px !important;  /* requested top space */
-    padding-bottom: 0 !important;  /* critical: remove real gap under title */
+    justify-content: center !important;
+    padding-top: 30px !important;
+    padding-bottom: 0 !important; /* critical: make title2 flush with grid */
   }
   .title-ghost{ width: 0 !important; }
   .title-right{
-    position: absolute;
+    position: absolute !important;
     right: var(--tb-sidePad);
     top: 50%;
     transform: translateY(-50%);
-    margin-bottom: 0 !important;
+    margin: 0 !important;
   }
   .title-center{
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important; /* force real centering */
     margin-bottom: 0 !important;
-    padding-bottom: 16px !important; /* manage title1↔grid gap here (16px default) */
+    padding-bottom: 16px !important; /* title1 ↔ grid spacing (keep 16px) */
   }
 
-  /* 3) SNS grid center */
+  /* SNS grid should not float at the top on mobile */
   .sns-grid{
     position: static !important;
     justify-content: center;
     margin: 24px auto 6px !important;
-    top: auto !important; left: auto !important; z-index: auto !important;
+    top: auto !important;
+    left: auto !important;
+    z-index: auto !important;
   }
 
-  /* 4) Footer readable on mobile */
+  /* Footer readable on mobile/tablet */
   .page-footer{
     position: static;
     width: 100%;
@@ -288,9 +291,89 @@
   .page-footer span{ display:block; }
 }
 
+/* === Reinforce Desktop (>=1025px) semantics (leave success behavior intact) === */
+@media (min-width: 1025px){
+  .title-bar{ justify-content: space-between; }
+  .title-ghost{ width: var(--tb-rightW); }
+  /* Keep the success formula for sticking the grid right under the fixed title */
+  .wrap{ padding-top: calc(var(--hero) - var(--tb-vertPad)) !important; }
+  .grid{ margin-top: 0 !important; }
+}
+
 </style>
 
+<style>
 
+/* === Mobile: title & SNS follow the page flow (no fixed) === */
+@media (max-width: 900px){
+  /* 타이틀바를 고정 해제: 문서 흐름에 넣기 */
+  .title-fixed{
+    position: static !important;
+    width: 100% !important;
+    z-index: auto !important;
+    pointer-events: auto !important; /* 이미지 클릭 유지 */
+  }
+
+  /* 타이틀 높이에 맞춰 본문을 밀던 값 제거 (이제 고정이 아님) */
+  .wrap{
+    padding-top: 16px !important;   /* 자연스러운 상단 간격만 유지 */
+  }
+
+  /* SNS 그리드도 고정 해제 + 자연스러운 간격 */
+  .sns-grid{
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    z-index: auto !important;
+    margin: 8px 0 12px !important;   /* 타이틀 바로 아래 붙게 */
+  }
+}
+
+
+
+/* === Consolidated mobile rules (final) === */
+@media (max-width: 900px){
+  /* 화면에서만 순서 변경: grid → sns → footer */
+  .wrap{ display:flex; flex-direction:column; }
+  .grid{ order:1; }
+  .sns-grid{ order:2; }
+  .page-footer{ order:3; }
+
+  /* title1 중앙 고정 + title2 오른쪽 고정(겹침 허용) */
+  .title-bar{ position:relative; justify-content:center; }
+  .title-ghost{ width:0 !important; }                    /* 모바일 스페이서 제거 */
+  .title-right{
+    position:absolute; right: var(--tb-sidePad);
+    top:50%; transform: translateY(-50%);
+    margin-right:0 !important;
+  }
+
+  /* SNS: 고정 해제 + 중앙정렬 + 위/아래 간격 */
+  .sns-grid{
+    position: static !important;
+    top:auto !important; left:auto !important; z-index:auto !important;
+    justify-content:center;
+    margin: 24px auto 6px !important;                    /* 위 24px, 아래 6px */
+  }
+
+  /* 모바일 푸터는 두 줄 허용 (PC는 한 줄 유지) */
+  .page-footer{ position:static; white-space:normal; }
+  .page-footer span{ display:block; }
+}
+
+
+
+/* === Mobile override: wrap stick to title2+grid, title top padding 30px === */
+@media (max-width: 900px){
+  .wrap{
+    padding-top: 0 !important;      /* grid를 타이틀 바로 아래에 딱 붙임 */
+  }
+  .title-bar{
+    padding-top: 30px !important;   /* 타이틀 위쪽 여백 30px */
+  }
+}
+
+</style>
 </head>
 <body>
   <div class="title-fixed">
