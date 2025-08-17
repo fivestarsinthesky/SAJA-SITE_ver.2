@@ -169,19 +169,19 @@
   }
 }
 
-/* === FINAL PATCH: title1/2 and grid spacing === */
+/* === FINAL PATCH (Option 1: remove +8px) === */
+/* PC */
 @media (min-width: 901px){
-  /* PC: title1 below spacing 24px, title2 flush with grid */
   .title-bar{ padding-bottom: 0 !important; }
   .grid{ margin-top: 0 !important; }
-  .title-center{ padding-bottom: 24px !important; }
+  .title-center{ margin-bottom: 0 !important; padding-bottom: 16px !important; } /* revert to +0 (i.e., 16px total) */
   .title-right{ margin-bottom: 0 !important; }
 }
+/* Mobile */
 @media (max-width: 900px){
-  /* Mobile: title1 below spacing 24px, title2 flush with grid */
   .title-bar{ padding-bottom: 0 !important; }
   .grid{ margin-top: 0 !important; }
-  .title-center{ padding-bottom: 24px !important; }
+  .title-center{ margin-bottom: 0 !important; padding-bottom: 16px !important; } /* revert to +0 (i.e., 16px total) */
   .title-right{ margin-bottom: 0 !important; }
 }
 
