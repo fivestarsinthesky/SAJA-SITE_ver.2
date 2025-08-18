@@ -5624,10 +5624,10 @@ I'll protect you from nightmares, Baby`,
 
 
 /* ==============================
- * Label Marquee Enhancement
- * PC: hover 시 해당 라벨만 무빙
- * Mobile: 뷰포트 안에서 넘치는 라벨은 전부 무빙
- * 글자 축소 없음. 말줄임이 기본, 필요 시에만 무빙.
+ * Label Marquee Enhancement (Tile Hover on PC)
+ * - PC: 타일(.tile) 전체에 마우스 올리면 해당 라벨만 무빙
+ * - Mobile: 뷰포트 안에서 넘치는 라벨은 전부 무빙
+ * - 글자 축소 없음. 기본은 말줄임, 필요 시에만 무빙.
  * ============================== */
 (function(){
   const SPEED = 50; // px/s
@@ -5647,6 +5647,7 @@ I'll protect you from nightmares, Baby`,
 .label .mv-t{display:inline-block;padding-right:16px;}
 @keyframes lp-mv{from{transform:translateX(0);}to{transform:translateX(calc(-1 * var(--mv-dist, 0px)));}}
 .label.mv-on .mv-track{animation: lp-mv linear infinite; animation-duration: var(--mv-dur, 12s);}
+.tile{cursor:pointer;}
     `.trim();
     const style = document.createElement('style');
     style.id = 'label-mv-inline-css';
@@ -5703,30 +5704,42 @@ I'll protect you from nightmares, Baby`,
   function initForGrid(grid){
     if (!grid) return;
 
-    // Desktop: hover per-label
+    // === PC: 타일 전체 호버로 라벨 무빙 ===
     if (HOVER_CAPABLE){
-      let hovered = null;
+      let hovered = null; // { tile, label }
+
       grid.addEventListener('mouseover', (e) => {
-        const label = e.target.closest('.label');
-        if (!label || !grid.contains(label)) return;
-        if (hovered === label) return;
-        if (hovered) stopMarquee(hovered);
-        hovered = null;
-        if (isOverflow(label)){ startMarquee(label); hovered = label; }
+        const tile = e.target.closest('.tile');
+        if (!tile || !grid.contains(tile)) return;
+
+        const label = tile.querySelector('.label');
+        if (!label) return;
+
+        if (hovered && hovered.tile === tile) return;
+
+        if (hovered) { stopMarquee(hovered.label); hovered = null; }
+
+        if (isOverflow(label)){
+          startMarquee(label);
+          hovered = { tile, label };
+        }
       });
+
       grid.addEventListener('mouseout', (e) => {
-        const from = e.target.closest('.label');
-        const to   = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest('.label') : null;
-        if (from && from === hovered && to !== hovered){
-          stopMarquee(hovered);
+        if (!hovered) return;
+        const fromTile = e.target.closest('.tile');
+        const toTile   = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest('.tile') : null;
+        if (fromTile && hovered.tile === fromTile && toTile !== fromTile){
+          stopMarquee(hovered.label);
           hovered = null;
         }
       });
+
       grid.addEventListener('mouseleave', () => {
-        if (hovered){ stopMarquee(hovered); hovered = null; }
+        if (hovered){ stopMarquee(hovered.label); hovered = null; }
       });
     } else {
-      // Mobile: all overflowing labels in viewport (IntersectionObserver)
+      // === Mobile: 뷰포트 안 넘치는 라벨은 전부 무빙 ===
       const io = new IntersectionObserver((entries) => {
         for (const entry of entries){
           const label = entry.target;
@@ -5742,7 +5755,7 @@ I'll protect you from nightmares, Baby`,
       const observeAll = () => grid.querySelectorAll('.label').forEach(lb => io.observe(lb));
       observeAll();
 
-      // Dynamic changes (e.g., filtering)
+      // 동적 변경 대응
       const mo = new MutationObserver((mutList) => {
         for (const m of mutList){
           m.addedNodes && m.addedNodes.forEach(node => {
@@ -5759,7 +5772,7 @@ I'll protect you from nightmares, Baby`,
       });
       mo.observe(grid, { childList: true, subtree: true });
 
-      // On resize, stop all; IO will re-trigger as needed
+      // 리사이즈 시 재측정
       let rid;
       window.addEventListener('resize', () => {
         cancelAnimationFrame(rid);
@@ -5768,7 +5781,7 @@ I'll protect you from nightmares, Baby`,
         });
       });
 
-      // Re-measure after fonts load
+      // 폰트 로드 후 보정
       window.addEventListener('load', () => {
         grid.querySelectorAll('.label.mv-on').forEach(measureAndSet);
       });
