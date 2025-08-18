@@ -5621,3 +5621,173 @@ I'll protect you from nightmares, Baby`,
 ---`
   }
 ];
+
+
+/* ==============================
+ * Label Marquee Enhancement
+ * PC: hover 시 해당 라벨만 무빙
+ * Mobile: 뷰포트 안에서 넘치는 라벨은 전부 무빙
+ * 글자 축소 없음. 말줄임이 기본, 필요 시에만 무빙.
+ * ============================== */
+(function(){
+  const SPEED = 50; // px/s
+  const GAP   = 16; // px between clones
+  const HOVER_CAPABLE = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  const wrappedSet = new WeakSet();
+
+  function isOverflow(el){ return el && (el.scrollWidth > el.clientWidth + 1); }
+
+  function ensureInlineCSS(){
+    if (document.getElementById('label-mv-inline-css')) return;
+    const css = `
+.label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.label.mv-viewport{overflow:hidden;white-space:nowrap;}
+.label .mv-track{display:inline-block;will-change:transform;}
+.label .mv-t{display:inline-block;padding-right:16px;}
+@keyframes lp-mv{from{transform:translateX(0);}to{transform:translateX(calc(-1 * var(--mv-dist, 0px)));}}
+.label.mv-on .mv-track{animation: lp-mv linear infinite; animation-duration: var(--mv-dur, 12s);}
+    `.trim();
+    const style = document.createElement('style');
+    style.id = 'label-mv-inline-css';
+    style.textContent = css;
+    document.head.appendChild(style);
+  }
+
+  function measureAndSet(label){
+    const unit = label.querySelector('.mv-t');
+    if (!unit) return;
+    const dist = unit.scrollWidth + GAP;
+    const dur  = Math.max(6, dist / SPEED);
+    label.style.setProperty('--mv-dist', dist + 'px');
+    label.style.setProperty('--mv-dur',  dur + 's');
+  }
+
+  function wrapLabel(label){
+    if (wrappedSet.has(label)) return;
+    label.dataset.origHtml = label.innerHTML;
+    const text = label.textContent.trim();
+    label.classList.add('mv-viewport');
+    label.innerHTML = '<span class="mv-track"><span class="mv-t"></span><span class="mv-t" aria-hidden="true"></span></span>';
+    const spans = label.querySelectorAll('.mv-t');
+    spans[0].textContent = text;
+    spans[1].textContent = text;
+    wrappedSet.add(label);
+    measureAndSet(label);
+  }
+
+  function unwrapLabel(label){
+    if (!wrappedSet.has(label)) return;
+    label.classList.remove('mv-on','mv-viewport');
+    label.style.removeProperty('--mv-dist');
+    label.style.removeProperty('--mv-dur');
+    if (label.dataset.origHtml != null){
+      label.innerHTML = label.dataset.origHtml;
+      delete label.dataset.origHtml;
+    }
+    wrappedSet.delete(label);
+  }
+
+  function startMarquee(label){
+    if (!isOverflow(label)) return;
+    wrapLabel(label);
+    label.classList.add('mv-on');
+  }
+
+  function stopMarquee(label){
+    if (!wrappedSet.has(label)) return;
+    label.classList.remove('mv-on');
+    unwrapLabel(label);
+  }
+
+  function initForGrid(grid){
+    if (!grid) return;
+
+    // Desktop: hover per-label
+    if (HOVER_CAPABLE){
+      let hovered = null;
+      grid.addEventListener('mouseover', (e) => {
+        const label = e.target.closest('.label');
+        if (!label || !grid.contains(label)) return;
+        if (hovered === label) return;
+        if (hovered) stopMarquee(hovered);
+        hovered = null;
+        if (isOverflow(label)){ startMarquee(label); hovered = label; }
+      });
+      grid.addEventListener('mouseout', (e) => {
+        const from = e.target.closest('.label');
+        const to   = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest('.label') : null;
+        if (from && from === hovered && to !== hovered){
+          stopMarquee(hovered);
+          hovered = null;
+        }
+      });
+      grid.addEventListener('mouseleave', () => {
+        if (hovered){ stopMarquee(hovered); hovered = null; }
+      });
+    } else {
+      // Mobile: all overflowing labels in viewport (IntersectionObserver)
+      const io = new IntersectionObserver((entries) => {
+        for (const entry of entries){
+          const label = entry.target;
+          if (!entry.isIntersecting){
+            stopMarquee(label);
+            continue;
+          }
+          if (isOverflow(label)) startMarquee(label);
+          else stopMarquee(label);
+        }
+      }, { root: null, threshold: 0.01 });
+
+      const observeAll = () => grid.querySelectorAll('.label').forEach(lb => io.observe(lb));
+      observeAll();
+
+      // Dynamic changes (e.g., filtering)
+      const mo = new MutationObserver((mutList) => {
+        for (const m of mutList){
+          m.addedNodes && m.addedNodes.forEach(node => {
+            if (!(node instanceof Element)) return;
+            if (node.classList?.contains('label')) io.observe(node);
+            node.querySelectorAll?.('.label')?.forEach(el => io.observe(el));
+          });
+          m.removedNodes && m.removedNodes.forEach(node => {
+            if (!(node instanceof Element)) return;
+            if (node.classList?.contains('label')) { io.unobserve(node); stopMarquee(node); }
+            node.querySelectorAll?.('.label')?.forEach(el => { io.unobserve(el); stopMarquee(el); });
+          });
+        }
+      });
+      mo.observe(grid, { childList: true, subtree: true });
+
+      // On resize, stop all; IO will re-trigger as needed
+      let rid;
+      window.addEventListener('resize', () => {
+        cancelAnimationFrame(rid);
+        rid = requestAnimationFrame(() => {
+          grid.querySelectorAll('.label').forEach(stopMarquee);
+        });
+      });
+
+      // Re-measure after fonts load
+      window.addEventListener('load', () => {
+        grid.querySelectorAll('.label.mv-on').forEach(measureAndSet);
+      });
+    }
+  }
+
+  function whenReady(){
+    const grid = document.getElementById('grid');
+    if (grid){
+      ensureInlineCSS();
+      initForGrid(grid);
+    } else {
+      setTimeout(whenReady, 50);
+    }
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', whenReady);
+  } else {
+    whenReady();
+  }
+})();
