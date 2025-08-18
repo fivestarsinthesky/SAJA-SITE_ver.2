@@ -419,6 +419,13 @@ header .actions{
 @media (max-width: 360px){
   #hdrTitle{ --hdr-mask-edge: 108px; }
 }
+</style><style id="hdr-title-viewport-base">
+/* === Header title viewport base === */
+#hdrTitle{
+  display:block;
+  overflow:hidden; /* hard clip to available width */
+  min-width:0;
+}
 </style></head>
 <body>
 <header>
@@ -675,31 +682,44 @@ h1{font-size:18px;margin:0 0 10px 0}
   MOBILE.addEventListener('change', update);
 })();
 </script><script id="hdr-guard-js">
-// === Header title guard: keep marquee before buttons (dynamic padding & mask) ===
+// === Header title guard v2: compute exact available width before actions ===
 (function(){
   function syncHeaderGuard(){
-    const title = document.getElementById('hdrTitle');
+    const title   = document.getElementById('hdrTitle');
+    const header  = document.querySelector('header');
     const actions = document.querySelector('header .actions');
-    if(!title || !actions) return;
+    if(!title) return;
 
-    // Measure actions total width (including gaps) using bounding box
-    const rect = actions.getBoundingClientRect();
-    const titleRect = title.getBoundingClientRect();
-    // Gap between title & actions (visual breathing room)
-    const extra = 12; // px
-    const guard = Math.ceil(rect.width + extra);
+    // Reset before measuring
+    title.style.maxWidth = '';
+    title.style.paddingRight = '';
+    title.style.setProperty('--hdr-mask-edge','');
 
-    // Apply as right padding so the title box ends before buttons
-    title.style.paddingRight = guard + 'px';
+    // Compute available width from title's left edge to actions' left edge
+    const tRect = title.getBoundingClientRect();
+    let avail = 0;
+    const extra = 12; // breathing room
 
-    // Also set mask edge so text fades out just before the buttons
-    title.style.setProperty('--hdr-mask-edge', guard + 'px');
+    if (actions){
+      const aRect = actions.getBoundingClientRect();
+      avail = Math.round(aRect.left - tRect.left - extra);
+    } else if (header){
+      // Fallback: up to header's right edge
+      const hRect = header.getBoundingClientRect();
+      avail = Math.round(hRect.right - tRect.left - extra);
+    }
+
+    if (avail > 0){
+      title.style.maxWidth = avail + 'px';
+      // For safety, also keep a subtle mask when available width is small
+      const maskEdge = Math.min(96, Math.max(0, 0)); // set to 0 (no mask); tweak if needed
+      title.style.setProperty('--hdr-mask-edge', maskEdge + 'px');
+    }
   }
 
-  // Run after tracks-ready (layout settled) and on resize
+  // Run after title is set by initDetail
   document.addEventListener('tracks-ready', function(){ requestAnimationFrame(syncHeaderGuard); });
   window.addEventListener('resize', syncHeaderGuard);
-  // Also on fonts/images load which may shift widths slightly
   window.addEventListener('load', syncHeaderGuard);
 })();
 </script></body>
