@@ -42,7 +42,7 @@
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     font-weight:700;
     line-height:1.1;
-    font-size: 10px;
+    font-size: 0.75rem;
   }
 
   /* 단계적 반응형 */
@@ -538,14 +538,13 @@
       grid.appendChild(frag);
 
       const labels = grid.querySelectorAll('.label');
-      labels.forEach(label => fitLabel(label, {max:14, min:10, step:1}));
-
-      let t;
+    // [REMOVED] dynamic fitLabel sizing disabled for uniform rem-based font-size
+let t;
       window.addEventListener('resize', () => {
         clearTimeout(t);
         t = setTimeout(() => {
-          labels.forEach(label => fitLabel(label, {max:14, min:10, step:1}));
-        }, 100);
+    // [REMOVED] dynamic fitLabel sizing disabled for uniform rem-based font-size
+}, 100);
       });
     } catch (e) {
       console.error(e);
@@ -595,5 +594,6 @@
 
 </body>
 </html>
-   
+  
+ 
  
