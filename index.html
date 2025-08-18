@@ -622,8 +622,9 @@ let t;
 <script id="mobile-label-marquee">
 (function(){
   const MOBILE = window.matchMedia('(max-width: 900px)');
-  const SPEED = 50; // px per second
-  const GAP = 24;   // px
+  const SPEED = 18; // px per second
+  const GAP = 24;   const MIN_DURATION = 12; // seconds
+// px
 
   let _lastW = 0, _lastH = 0;
 
@@ -670,8 +671,8 @@ let t;
     const txtW = tmp.scrollWidth;
     document.body.removeChild(tmp);
     const distance = txtW + GAP;
-    const duration = Math.max(6, distance / SPEED);
-    el.style.setProperty('--marq-distance', distance + 'px');
+    const duration = Math.max(MIN_DURATION, distance / SPEED);
+el.style.setProperty('--marq-distance', distance + 'px');
     el.style.setProperty('--marq-duration', duration + 's');
   }
 
