@@ -379,6 +379,35 @@ header .actions{
   -webkit-mask-image: linear-gradient(to right, #000 0%, #000 92%, transparent 100%);
           mask-image: linear-gradient(to right, #000 0%, #000 92%, transparent 100%);
 }
+</style><style id="mobile-marquee-css">
+/* === Mobile-only marquee for header title (overflows only, start at left) === */
+@media (max-width: 768px){
+  #hdrTitle.marquee-viewport {
+    position: relative;
+    overflow: hidden;        /* clip horizontally */
+    white-space: nowrap;
+  }
+  #hdrTitle .marquee-track {
+    display: inline-block;
+    will-change: transform;
+  }
+  #hdrTitle .marquee-text {
+    display: inline-block;
+    padding-right: 24px;     /* gap between original and clone */
+  }
+  #hdrTitle.marquee--on .marquee-track {
+    animation: hdr-marquee linear infinite;
+    animation-duration: var(--hdr-marquee-duration, 12s);
+    animation-delay: 0s;     /* start moving immediately from left edge */
+  }
+  @keyframes hdr-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(-1 * var(--hdr-scroll-distance, 0px))); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    #hdrTitle.marquee--on .marquee-track { animation: none; transform:none; }
+  }
+}
 </style></head>
 <body>
 <header>
@@ -549,5 +578,79 @@ h1{font-size:18px;margin:0 0 10px 0}
   });
 })();
 </script>
-</body>
+<script>
+// === Mobile-only marquee for header title (overflows only) ===
+(function(){
+  const MOBILE = window.matchMedia('(max-width: 768px)');
+  const SPEED = 60; // px/s
+
+  function setupOrUpdateMarquee() {
+    const hdr = document.getElementById('hdrTitle');
+    if (!hdr) return;
+
+    // If not mobile, or empty title, or already handled w/o overflow → turn off
+    // Ensure we have plain text to measure (extract textContent from either structure)
+    const text = (hdr.querySelector('.title-text')?.textContent ?? hdr.textContent ?? '').trim();
+    if (!text) return;
+
+    // Build structure only once; reuse thereafter
+    // If not yet wrapped, create viewport/track and spans
+    if (!hdr.classList.contains('marquee-viewport')) {
+      // Clear and wrap
+      hdr.textContent = '';
+      hdr.classList.add('marquee-viewport');
+
+      const track = document.createElement('div');
+      track.className = 'marquee-track';
+
+      const span = document.createElement('span');
+      span.className = 'marquee-text';
+      span.textContent = text;
+
+      const ghost = document.createElement('span');
+      ghost.className = 'marquee-text';
+      ghost.setAttribute('aria-hidden','true');
+      ghost.textContent = text;
+
+      track.appendChild(span);
+      track.appendChild(ghost);
+      hdr.appendChild(track);
+    }
+
+    const trackEl = hdr.querySelector('.marquee-track');
+    const spanEl  = hdr.querySelector('.marquee-text');
+
+    // Measure overflow condition
+    const viewportWidth = hdr.clientWidth;
+    const textWidth = spanEl.scrollWidth;
+
+    if (MOBILE.matches && textWidth > viewportWidth + 1) {
+      // enable marquee
+      hdr.classList.add('marquee--on');
+      const distance = textWidth + 24;               // include gap
+      const duration = Math.max(6, distance / SPEED);
+      hdr.style.setProperty('--hdr-scroll-distance', distance + 'px');
+      hdr.style.setProperty('--hdr-marquee-duration', duration + 's');
+    } else {
+      // disable marquee, reset transform
+      hdr.classList.remove('marquee--on');
+      if (trackEl) trackEl.style.transform = 'translateX(0)';
+    }
+  }
+
+  // Recompute when tracks are ready (after header title set in initDetail)
+  document.addEventListener('tracks-ready', function(){
+    // Defer until initDetail has set hdrTitle text
+    setTimeout(setupOrUpdateMarquee, 0);
+  });
+
+  // Also recompute on resize and media query changes
+  let rid;
+  window.addEventListener('resize', function(){
+    cancelAnimationFrame(rid);
+    rid = requestAnimationFrame(setupOrUpdateMarquee);
+  });
+  MOBILE.addEventListener('change', setupOrUpdateMarquee);
+})();
+</script></body>
 </html>
