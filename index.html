@@ -300,6 +300,32 @@
   .grid{ margin-top: 0 !important; }
 }
 
+
+/* === Mobile-only marquee for overflowing .label text (robust) === */
+@media (max-width: 900px){
+  .label.marq-viewport{
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    overflow: hidden; white-space: nowrap;
+    padding: 6px 8px; /* keep original padding */
+    background: linear-gradient(to top, rgba(0,0,0,.65), rgba(0,0,0,0));
+  }
+  .label .marq-track{
+    display: inline-block;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    animation: marq linear infinite;
+    animation-duration: var(--marq-duration, 12s);
+    animation-play-state: var(--marq-state, running);
+  }
+  .label .marq-text{ display:inline-block; padding-right: 24px; }
+  @keyframes marq{
+    from{ transform: translateX(0); }
+    to  { transform: translateX(calc(-1 * var(--marq-distance, 0px))); }
+  }
+}
 </style>
 
 <style>
@@ -592,6 +618,118 @@ let t;
 })();
 </script>
 
+
+<script id="mobile-label-marquee">
+(function(){
+  const MOBILE = window.matchMedia('(max-width: 900px)');
+  const SPEED = 50; // px per second
+  const GAP = 24;   // px
+
+  let _lastW = 0, _lastH = 0;
+
+  function needsOverflow(el){
+    // Temporarily ensure single-line to measure
+    const prev = el.style.whiteSpace;
+    el.style.whiteSpace = 'nowrap';
+    const overflow = el.scrollWidth > el.clientWidth + 1;
+    el.style.whiteSpace = prev || '';
+    return overflow;
+  }
+
+  function ensurePlain(el, text){
+    el.classList.remove('marq-viewport');
+    el.style.removeProperty('--marq-distance');
+    el.style.removeProperty('--marq-duration');
+    el.innerText = text;
+  }
+
+  function ensureMarquee(el, text){
+    if (!el.classList.contains('marq-viewport')){
+      el.classList.add('marq-viewport');
+      el.innerHTML = '';
+      const track = document.createElement('span');
+      track.className = 'marq-track';
+      const a = document.createElement('span');
+      a.className = 'marq-text';
+      a.textContent = text;
+      const b = document.createElement('span');
+      b.className = 'marq-text';
+      b.setAttribute('aria-hidden', 'true');
+      b.textContent = text;
+      track.appendChild(a);
+      track.appendChild(b);
+      el.appendChild(track);
+    }
+    // compute distance and duration
+    const tmp = document.createElement('span');
+    tmp.style.position = 'absolute';
+    tmp.style.visibility = 'hidden';
+    tmp.style.whiteSpace = 'nowrap';
+    tmp.textContent = text;
+    document.body.appendChild(tmp);
+    const txtW = tmp.scrollWidth;
+    document.body.removeChild(tmp);
+    const distance = txtW + GAP;
+    const duration = Math.max(6, distance / SPEED);
+    el.style.setProperty('--marq-distance', distance + 'px');
+    el.style.setProperty('--marq-duration', duration + 's');
+  }
+
+  function update(){
+    const labels = document.querySelectorAll('.grid .label');
+    if (!labels.length) return;
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const onlyHeightChanged = (Math.abs(vw - _lastW) < 2) && (Math.abs(vh - _lastH) > 0);
+    _lastW = vw; _lastH = vh;
+
+    labels.forEach(el => {
+      const text = el.getAttribute('data-orig') || el.textContent.trim();
+      el.setAttribute('data-orig', text);
+
+      if (!MOBILE.matches){
+        // Desktop: ensure plain
+        if (el.classList.contains('marq-viewport')) ensurePlain(el, text);
+        return;
+      }
+
+      // Mobile
+      if (onlyHeightChanged && el.classList.contains('marq-viewport')){
+        // URL-bar show/hide: just recompute variables to avoid teardown
+        ensureMarquee(el, text);
+        return;
+      }
+
+      if (needsOverflow(el)){
+        ensureMarquee(el, text);
+      } else {
+        ensurePlain(el, text);
+      }
+    });
+  }
+
+  // Initial run after grid render; grid is populated via script, so delay a bit
+  if (document.readyState === 'complete' || document.readyState === 'interactive'){
+    setTimeout(update, 0);
+  } else {
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(update, 0); });
+  }
+
+  window.addEventListener('resize', function(){
+    window.requestAnimationFrame(update);
+  }, { passive: true });
+
+  window.addEventListener('scroll', function(){
+    // Keep animation running
+    document.querySelectorAll('.label.marq-viewport').forEach(el=>{
+      el.style.setProperty('--marq-state', 'running');
+    });
+  }, { passive: true });
+
+  MOBILE.addEventListener('change', update);
+})();
+</script>
 </body>
 </html>
   
